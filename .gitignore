@@ -1,0 +1,16 @@
+# Virtual environment
+processamento_da_fala/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# HuggingFace model cache (large, no need to commit)
+~/.cache/huggingface/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Audio files (if you recorded locally)
+*.wav
+*.mp3
