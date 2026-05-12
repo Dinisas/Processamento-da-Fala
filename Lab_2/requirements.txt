@@ -1,0 +1,14 @@
+librosa
+matplotlib
+numpy
+scikit-learn
+speechbrain
+torch
+torchaudio
+tqdm
+tensorboardX
+opensmile
+transformers
+datasets
+evaluate
+transformers[torch]

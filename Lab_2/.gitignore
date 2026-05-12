@@ -1,0 +1,7 @@
+.venv/
+lab2_data/
+__pycache__/
+*.csv
+tmp/
+README.md
+.DS_Store
