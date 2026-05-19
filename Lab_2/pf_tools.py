@@ -224,7 +224,7 @@ def save_model(model, model_id, path):
     if not os.path.isdir(path):
         os.makedirs(path, exist_ok=True)
 
-    now = str(datetime.datetime.now()).replace(' ','_').split('.')[0]
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         
     model_name = f'{model_id}_{now}'
     os.mkdir(f'{path}/{model_name}/')
