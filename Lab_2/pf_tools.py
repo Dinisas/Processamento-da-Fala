@@ -314,7 +314,7 @@ def create_submission_file(resdir, filename):
             csv_writer.writerow((results_evl['fileids'][i], f'{results_evl["hyp"][i]:.1f}'))
 
 
-def predict_nn(model, dataset, class2id=None):
+def predict_nn(model, dataset, target_pos=1):
     # Create data loader
     test_loader = torch.utils.data.DataLoader(
             dataset=dataset,
@@ -325,41 +325,88 @@ def predict_nn(model, dataset, class2id=None):
     references = []
     fileids = []
     
+    model.eval() # Ensure model is in evaluation mode
     with torch.no_grad():
         for batch_X, batch_y, batch_files in test_loader:
             outputs = model(batch_X.squeeze(dim=1))
-            _, predicted = torch.max(outputs, 1)
-            predictions.append(predicted.item())
-            references.append(batch_y[0] if class2id is None else class2id[batch_y[0]])
+            predictions.append(outputs.item())
+            
+            # 1. Extract the raw target safely
+            raw_target = batch_y[target_pos][0] if isinstance(batch_y, (list, tuple)) else batch_y[0]
+            
+            # 2. Check if it's a tensor (has .item()) or a native int/str
+            val = raw_target.item() if hasattr(raw_target, 'item') else raw_target
+            
+            # 3. Handle the "?" string for missing ages in the 'evl' set
+            if val == "?":
+                val = np.nan
+            else:
+                val = float(val)
+                
+            references.append(val)
             fileids.append(batch_files[0])
     
-    return np.array(predictions), np.array(references), np.array(fileids)
+    return np.array(predictions), np.array(references, dtype=float), np.array(fileids)
 
-def train_nn(model, traindataset, testdataset, class2id=None, batch_size=16, epochs=200, lr=0.005, momentum=0.9, weight_decay=0.0001):
-    criterion = nn.CrossEntropyLoss()
+def train_nn(model, traindataset, testdataset, target_pos=1, batch_size=16, epochs=200, lr=0.005, momentum=0.9, weight_decay=0.0001):
+    criterion = nn.MSELoss()
     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
     
-    if class2id is None:
-        raise ValueError("class2id must be provided")
-    # Create data loader
     train_loader = torch.utils.data.DataLoader(
             dataset=traindataset,
             batch_size=batch_size,
             shuffle=True
     )
+    
     for epoch in range(epochs):
+        model.train() 
+        epoch_loss = 0.0
+        valid_batches = 0
+        
         for batch_X, batch_y, _ in train_loader:
             outputs = model(batch_X.squeeze(dim=1))
-            loss = criterion(outputs, torch.tensor(list(map(lambda x:class2id[x],batch_y))))
+            
+            # Extract raw targets (could be a mix of ints and "?" strings)
+            raw_targets = batch_y[target_pos] if isinstance(batch_y, (list, tuple)) else batch_y
+            
+            clean_targets = []
+            clean_outputs = []
+            
+            # Filter out missing "?" targets from the batch
+            for i, t in enumerate(raw_targets):
+                val = t.item() if hasattr(t, 'item') else t
+                if val != "?":
+                    clean_targets.append(float(val))
+                    clean_outputs.append(outputs[i])
+            
+            # Skip the backward pass if all labels in this batch were missing
+            if not clean_targets:
+                continue
+                
+            # Convert cleaned lists to tensors for Loss calculation
+            targets_tensor = torch.tensor(clean_targets, dtype=torch.float32).view(-1, 1)
+            outputs_tensor = torch.stack(clean_outputs).view(-1, 1)
+            
+            loss = criterion(outputs_tensor, targets_tensor)
             
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            
+            epoch_loss += loss.item()
+            valid_batches += 1
         
         if (epoch + 1) % 10 == 0:
-            print(f'Epoch {epoch+1}/{epochs}, Loss: {loss.item():.4f}')
+            avg_loss = epoch_loss / valid_batches if valid_batches > 0 else 0
+            print(f'Epoch {epoch+1}/{epochs}, Train MSE Loss: {avg_loss:.4f}')
+            
             if testdataset is not None:
-                hyp, ref, _ = predict_nn(model, testdataset, class2id=class2id)
-                accuracy = torch.tensor(hyp == ref).float().mean()
-                print(f'Dev Accuracy: {accuracy.item() * 100:.2f}%')
+                hyp, ref, _ = predict_nn(model, testdataset, target_pos=target_pos)
                 
+                # Calculate MAE, ignoring the NaNs we created from "?" labels
+                valid_mask = ~np.isnan(ref)
+                if valid_mask.sum() > 0:
+                    mae = np.mean(np.abs(hyp[valid_mask] - ref[valid_mask]))
+                    print(f'Dev Mean Absolute Error (MAE): {mae:.4f}')
+                else:
+                    print('Dev Mean Absolute Error (MAE): N/A (No known dev labels)')
