@@ -410,3 +410,76 @@ def train_nn(model, traindataset, testdataset, target_pos=1, batch_size=16, epoc
                     print(f'Dev Mean Absolute Error (MAE): {mae:.4f}')
                 else:
                     print('Dev Mean Absolute Error (MAE): N/A (No known dev labels)')
+
+
+def extract_and_verify_data_for_ssl(datadir, partition_name):
+    """Locate the audio directory for the SSL notebook and normalize info.csv.
+
+    The teacher's SSL notebook expects a helper that:
+    - validates the partition's info.csv
+    - coerces the age column to numeric values where possible
+    - discovers whether audio lives under wav/, audio/, or directly in the partition
+    """
+
+    print(f"\n--- Preparing data for partition: {partition_name} ---")
+    partition_dir = os.path.join(datadir, partition_name)
+    info_csv_path = os.path.join(partition_dir, "info.csv")
+
+    if not os.path.exists(info_csv_path):
+        raise FileNotFoundError(
+            f"Expected info.csv not found for partition '{partition_name}' at "
+            f"'{info_csv_path}'. Please ensure data is extracted."
+        )
+
+    df_info = pd.read_csv(info_csv_path)
+    if df_info.empty:
+        raise ValueError(f"info.csv for partition '{partition_name}' is empty.")
+    if "age" not in df_info.columns:
+        raise ValueError(
+            f"info.csv for partition '{partition_name}' does not contain 'age' column."
+        )
+    if "wav" not in df_info.columns:
+        raise ValueError(
+            f"info.csv for partition '{partition_name}' does not contain 'wav' column."
+        )
+
+    df_info["age"] = pd.to_numeric(df_info["age"], errors="coerce")
+    df_info.to_csv(info_csv_path, index=False)
+
+    if df_info.empty:
+        raise ValueError(
+            f"info.csv for partition '{partition_name}' is unexpectedly empty."
+        )
+
+    sample_wav_filename = df_info.iloc[0]["wav"]
+    audio_base_path = None
+    potential_audio_dirs = [
+        os.path.join(partition_dir, "audio"),
+        os.path.join(partition_dir, "wav"),
+        partition_dir,
+    ]
+
+    for candidate in potential_audio_dirs:
+        if os.path.exists(os.path.join(candidate, sample_wav_filename)):
+            audio_base_path = candidate
+            break
+
+    if audio_base_path is None:
+        print(
+            f"Warning: Common audio subdirectories not found for '{partition_name}'. "
+            "Attempting deeper search..."
+        )
+        for root, _, files in os.walk(partition_dir):
+            if sample_wav_filename in files:
+                audio_base_path = root
+                break
+
+    if audio_base_path is None:
+        raise FileNotFoundError(
+            f"Could not locate audio files for partition '{partition_name}' based on "
+            f"'{sample_wav_filename}' from info.csv. No audio directory found within "
+            f"{partition_dir}."
+        )
+
+    print(f"Audio files for '{partition_name}' are located in: {audio_base_path}")
+    return audio_base_path
