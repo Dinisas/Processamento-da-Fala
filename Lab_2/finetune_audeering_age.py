@@ -161,25 +161,40 @@ class W2V2RegressionCollator:
         return batch
 
 
-def compute_metrics(eval_pred):
-    preds = eval_pred.predictions.squeeze(-1)
-    refs = eval_pred.label_ids
-    return {
-        'mae': float(mean_absolute_error(refs, preds)),
-        'mse': float(np.mean((preds - refs) ** 2)),
-    }
+def make_compute_metrics(y_mean=0.0, y_std=1.0):
+    """Factory that returns a compute_metrics callable. The model is trained
+    on normalised targets (zero mean, unit std on the training fold), so its
+    raw outputs live near 0; here we denormalise them before computing MAE/MSE
+    against the raw-age reference labels."""
+    def compute_metrics(eval_pred):
+        preds_norm = eval_pred.predictions.squeeze(-1)
+        preds = preds_norm * y_std + y_mean
+        refs = eval_pred.label_ids                     # raw ages, never normalised
+        return {
+            'mae': float(mean_absolute_error(refs, preds)),
+            'mse': float(np.mean((preds - refs) ** 2)),
+        }
+    return compute_metrics
 
 
 class RegressionTrainer(Trainer):
-    """Bypasses the model's built-in loss and uses MSE on the squeezed
-    single-logit output."""
+    """MSE on the squeezed single-logit output, with target normalisation.
+
+    Without normalisation, raw ages (~50, std ~10) make MSE start at ~2500
+    on a fresh random head; gradients explode, default clipping caps the
+    step size, and the model never escapes "predict near 0". Normalising
+    targets to ~N(0, 1) keeps initial loss on the order of 1 and lets the
+    head actually move. Set `trainer.y_mean` / `trainer.y_std` after init."""
+    y_mean = 0.0
+    y_std = 1.0
 
     def compute_loss(self, model, inputs, return_outputs=False,
                      num_items_in_batch=None):
         labels = inputs.pop('labels').float()
+        normalised = (labels - self.y_mean) / self.y_std
         outputs = model(**inputs)
         logits = outputs.logits.squeeze(-1)
-        loss = nn.functional.mse_loss(logits, labels)
+        loss = nn.functional.mse_loss(logits, normalised)
         return (loss, outputs) if return_outputs else loss
 
 
@@ -230,6 +245,15 @@ def run(args):
     df_evl   = load_partition_dataframe(datadir, 'evl')
     print(f'  {args.trainset}: {len(df_train)}   dev: {len(df_dev)}   evl: {len(df_evl)}')
 
+    # Target normalisation stats computed on the training fold only. Raw
+    # labels stay raw inside the Dataset; the RegressionTrainer normalises
+    # them just before computing MSE, and compute_metrics / final inference
+    # denormalise predictions back to age in years.
+    train_ages = [float(a) for a in df_train['age'].tolist() if not pd.isna(a)]
+    y_mean = float(np.mean(train_ages))
+    y_std  = float(np.std(train_ages) + 1e-8)
+    print(f'  target normalisation: y_mean={y_mean:.2f}  y_std={y_std:.2f}')
+
     ds = DatasetDict({
         'train': build_dataset(df_train, fe, duration=args.duration,
                                has_labels=True,  desc=f'{args.trainset:>10s}'),
@@ -278,8 +302,10 @@ def run(args):
         train_dataset=ds['train'],
         eval_dataset=ds['dev'],
         data_collator=W2V2RegressionCollator(fe),
-        compute_metrics=compute_metrics,
+        compute_metrics=make_compute_metrics(y_mean, y_std),
     )
+    trainer.y_mean = y_mean
+    trainer.y_std  = y_std
 
     print(f'\n-- training ({args.epochs} epochs) --')
     train_t0 = time.time()
@@ -287,17 +313,23 @@ def run(args):
     train_dt = time.time() - train_t0
     print(f'\n  training finished in {train_dt:.1f}s ({train_dt/60:.1f} min)')
 
-    # ----- evaluation -----
+    # ----- evaluation (denormalise model outputs to age in years) -----
     print('\n-- final dev prediction --')
     dev_pred = trainer.predict(ds['dev'])
-    dev_hyp = np.clip(dev_pred.predictions.squeeze(-1), AGE_MIN, AGE_MAX)
+    dev_hyp = np.clip(
+        dev_pred.predictions.squeeze(-1) * y_std + y_mean,
+        AGE_MIN, AGE_MAX,
+    )
     dev_ref = np.asarray(dev_pred.label_ids, dtype=float)
     dev_mae = float(mean_absolute_error(dev_ref, dev_hyp))
     print(f'  best-model dev MAE: {dev_mae:.3f}')
 
     print('\n-- evl prediction --')
     evl_pred = trainer.predict(ds['evl'])
-    evl_hyp = np.clip(evl_pred.predictions.squeeze(-1), AGE_MIN, AGE_MAX)
+    evl_hyp = np.clip(
+        evl_pred.predictions.squeeze(-1) * y_std + y_mean,
+        AGE_MIN, AGE_MAX,
+    )
 
     # ----- submission CSV (same pkl format the sweep script uses) -----
     resdir = output_dir / 'final'
