@@ -439,9 +439,23 @@ def run(args):
 # `epochs` is interpreted as the EarlyStopping ceiling when --grid is run
 # with --max-epochs; otherwise it's the fixed number of epochs.
 GRID = [
-    ('es_lr5e5',     5e-5, 40, None, 42),   # current SOTA recipe, let it converge
-    ('es_lr1e5',     1e-5, 40, None, 42),   # unconfounded re-test of low LR
-    ('es_lr5e5_s7',  5e-5, 40, None,  7),   # seed robustness at the winner
+    # ----- Phase A: seed sweep at the winning recipe (uncertainty on 5.19) -----
+    ('A_lr5e5_s42',  5e-5, 40, None,  42),
+    ('A_lr5e5_s7',   5e-5, 40, None,   7),
+    ('A_lr5e5_s13',  5e-5, 40, None,  13),
+    ('A_lr5e5_s21',  5e-5, 40, None,  21),
+    ('A_lr5e5_s99',  5e-5, 40, None,  99),
+
+    # ----- Phase B: LR neighbourhood at seed 42 -----
+    ('B_lr3e5_s42',  3e-5, 40, None,  42),
+    ('B_lr4e5_s42',  4e-5, 40, None,  42),
+    ('B_lr6e5_s42',  6e-5, 40, None,  42),
+    ('B_lr7e5_s42',  7e-5, 40, None,  42),
+    ('B_lr8e5_s42',  8e-5, 40, None,  42),
+
+    # ----- Phase D: lower LR with high ceiling (1e-5 deserved its fair shot) -----
+    ('D_lr1e5_s42',  1e-5, 60, None,  42),
+    ('D_lr2e5_s42',  2e-5, 60, None,  42),
 ]
 
 
