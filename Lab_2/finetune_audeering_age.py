@@ -65,6 +65,7 @@ from datasets import Dataset, DatasetDict
 from sklearn.metrics import mean_absolute_error
 from tqdm import tqdm
 from transformers import (
+    EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
     Wav2Vec2FeatureExtractor,
@@ -270,13 +271,18 @@ def run(args):
                   / f'finetune_audeering_age{suffix}')
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # If --max-epochs is set, use it as the ceiling and let EarlyStopping decide
+    # the real stopping point. Otherwise fall back to the fixed --epochs schedule.
+    use_early_stop = args.max_epochs is not None
+    n_epochs = args.max_epochs if use_early_stop else args.epochs
+
     training_args = TrainingArguments(
         output_dir=str(output_dir),
         per_device_train_batch_size=args.batch_size,
         per_device_eval_batch_size=max(args.batch_size, 4),
         gradient_accumulation_steps=args.grad_accum,
         learning_rate=args.lr,
-        num_train_epochs=args.epochs,
+        num_train_epochs=n_epochs,
         warmup_ratio=0.1,
         lr_scheduler_type='linear',
         eval_strategy='epoch',
@@ -296,6 +302,13 @@ def run(args):
         seed=args.seed,
     )
 
+    callbacks = []
+    if use_early_stop:
+        callbacks.append(EarlyStoppingCallback(
+            early_stopping_patience=args.patience,
+            early_stopping_threshold=0.01,
+        ))
+
     trainer = RegressionTrainer(
         model=model,
         args=training_args,
@@ -303,11 +316,16 @@ def run(args):
         eval_dataset=ds['dev'],
         data_collator=W2V2RegressionCollator(fe),
         compute_metrics=make_compute_metrics(y_mean, y_std),
+        callbacks=callbacks,
     )
     trainer.y_mean = y_mean
     trainer.y_std  = y_std
 
-    print(f'\n-- training ({args.epochs} epochs) --')
+    if use_early_stop:
+        print(f'\n-- training (max {n_epochs} epochs, '
+              f'early-stop patience={args.patience}) --')
+    else:
+        print(f'\n-- training ({n_epochs} epochs, no early stopping) --')
     train_t0 = time.time()
     trainer.train()
     train_dt = time.time() - train_t0
@@ -365,14 +383,22 @@ def run(args):
         print(f'{epoch:6.2f}  {tl_s}  {dm_s}')
 
     # Verdict — what to do with the result.
-    sorted_devs = [v for _, v in sorted(dev_maes.items())]
+    sorted_items = sorted(dev_maes.items())
+    sorted_devs = [v for _, v in sorted_items]
     if sorted_devs:
         baseline = 6.0   # frozen-feature ceiling on this dataset
         first, last = sorted_devs[0], sorted_devs[-1]
         best = min(sorted_devs)
+        best_epoch = min(sorted_items, key=lambda kv: kv[1])[0]
+        n_epochs_done = len(sorted_devs)
+        stop_msg = ''
+        if use_early_stop and n_epochs_done < n_epochs:
+            stop_msg = (f' (early-stopped at epoch {n_epochs_done} '
+                        f'of ceiling {n_epochs})')
         print(f'\n  frozen-feature reference (sweep ensemble): {baseline:.2f}')
         print(f'  this run: first epoch dev = {first:.3f}, '
-              f'final = {last:.3f}, best = {best:.3f}')
+              f'final = {last:.3f}, best = {best:.3f} '
+              f'@ epoch {best_epoch:g}{stop_msg}')
         if best < baseline - 0.5:
             print('  -> meaningful improvement. Fine-tuning works for our data; '
                   'rent the GPU and scale up.')
@@ -409,15 +435,13 @@ def run(args):
 # Grid search
 # ---------------------------------------------------------------------
 
-# 6-cell grid: 4-LR main sweep + a longer-epoch cell + a second-seed cell.
-# Tune by editing this list. Each row: (run_id, lr, epochs, top_layers, seed).
+# Grid cells. Each row: (run_id, lr, epochs, top_layers, seed).
+# `epochs` is interpreted as the EarlyStopping ceiling when --grid is run
+# with --max-epochs; otherwise it's the fixed number of epochs.
 GRID = [
-    ('lr_1e5',     1e-5, 5, None, 42),
-    ('lr_3e5',     3e-5, 5, None, 42),
-    ('lr_5e5',     5e-5, 5, None, 42),   # paper-ish default for SSL fine-tune
-    ('lr_1e4',     1e-4, 5, None, 42),
-    ('lr_5e5_e8',  5e-5, 8, None, 42),   # does more training help at the default LR?
-    ('lr_5e5_s7',  5e-5, 5, None,  7),   # seed variance estimate at the default LR
+    ('es_lr5e5',     5e-5, 40, None, 42),   # current SOTA recipe, let it converge
+    ('es_lr1e5',     1e-5, 40, None, 42),   # unconfounded re-test of low LR
+    ('es_lr5e5_s7',  5e-5, 40, None,  7),   # seed robustness at the winner
 ]
 
 
@@ -441,6 +465,14 @@ def run_grid(args):
         cell_args = copy.deepcopy(args)
         cell_args.lr = lr
         cell_args.epochs = epochs
+        # In grid mode the per-cell `epochs` is used as the early-stopping
+        # ceiling unless the user explicitly disabled early stopping via
+        # --no-early-stop on the grid invocation.
+        if getattr(args, 'no_early_stop', False):
+            cell_args.max_epochs = None
+        else:
+            cell_args.max_epochs = epochs
+        cell_args.patience = getattr(args, 'patience', 5)
         cell_args.top_layers = top_n
         cell_args.seed = seed
         cell_args.run_id = run_id
@@ -508,7 +540,16 @@ def main():
                         choices=('train_small', 'train'),
                         help='training partition (default train_small)')
     parser.add_argument('--epochs', type=int, default=3,
-                        help='number of training epochs (default 3 for local insight)')
+                        help='number of training epochs (default 3). '
+                             'Ignored when --max-epochs is given.')
+    parser.add_argument('--max-epochs', type=int, default=None,
+                        help='if set, enables early stopping. Training runs up '
+                             'to this many epochs but stops once dev MAE stops '
+                             'improving (see --patience). Recommended: 40.')
+    parser.add_argument('--patience', type=int, default=5,
+                        help='early-stop patience: number of consecutive eval '
+                             'rounds without dev-MAE improvement (>=0.01) before '
+                             'stopping. Only used with --max-epochs. Default 5.')
     parser.add_argument('--batch-size', type=int, default=2,
                         help='per-device batch size (default 2 for MPS; 8-16 on a GPU)')
     parser.add_argument('--grad-accum', type=int, default=4,
@@ -536,8 +577,11 @@ def main():
                              'in --grid mode (set automatically).')
     parser.add_argument('--grid', action='store_true',
                         help='run the predefined GRID of fine-tune configs. '
-                             'Sweeps LR, then a longer-epoch and a second-seed '
-                             'cell at the default LR. ~6 runs sequentially.')
+                             'Cells use early stopping; the per-cell `epochs` '
+                             'field is treated as the early-stop ceiling.')
+    parser.add_argument('--no-early-stop', action='store_true',
+                        help='in --grid mode, disable early stopping and run '
+                             'each cell for its fixed number of epochs.')
     args = parser.parse_args()
     if args.grid:
         run_grid(args)
