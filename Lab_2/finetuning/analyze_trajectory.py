@@ -14,9 +14,9 @@ slightly underestimates train MAE when residuals are heavy-tailed but is good
 enough to see the gap trend.
 
 Usage:
-    python analyze_trajectory.py finetune_results_es_lr5e5.csv
-    python analyze_trajectory.py finetune_results_es_lr5e5.csv --y-std 10.44
-    python analyze_trajectory.py f1.csv f2.csv f3.csv         # compare runs
+    python finetuning/analyze_trajectory.py finetune_results_es_lr5e5.csv
+    python finetuning/analyze_trajectory.py finetune_results_es_lr5e5.csv --y-std 10.44
+    python finetuning/analyze_trajectory.py f1.csv f2.csv f3.csv         # compare runs
 """
 
 from __future__ import annotations

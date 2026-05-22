@@ -26,9 +26,9 @@ Outputs:
   - sweep_results.csv with every individual run for offline analysis.
 
 Usage:
-    python run_audeering_age.py
-    python run_audeering_age.py --trainset train     # full train, slow first run
-    python run_audeering_age.py --duration 8         # shorter clips for speed
+    python finetuning/run_audeering_age.py
+    python finetuning/run_audeering_age.py --trainset train     # full train, slow first run
+    python finetuning/run_audeering_age.py --duration 8         # shorter clips for speed
 """
 
 import argparse
@@ -44,8 +44,9 @@ from pathlib import Path
 # MPS fallback for any op without a Metal kernel.
 os.environ.setdefault('PYTORCH_ENABLE_MPS_FALLBACK', '1')
 
-HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
+SCRIPT_DIR = Path(__file__).resolve().parent
+LAB2_DIR = SCRIPT_DIR.parent
+sys.path.insert(0, str(LAB2_DIR))
 
 import librosa
 import numpy as np
@@ -329,7 +330,7 @@ def predict_np(model, X, device):
 # ---------------------------------------------------------------------
 
 def run_sweep(args):
-    datadir = str(HERE / 'lab2_data') + '/'
+    datadir = str(LAB2_DIR / 'lab2_data') + '/'
     device = select_device()
     bb_cfg = BACKBONES[args.backbone]
     layers = args.layers or bb_cfg['layers']
@@ -453,14 +454,14 @@ def run_sweep(args):
     # Write top-3 submissions
     print('\n========= TOP-3 SUBMISSION CSVs =========')
     for r in all_sorted[:3]:
-        resdir = (HERE / 'lab2_data' / args.trainset / 'models'
+        resdir = (LAB2_DIR / 'lab2_data' / args.trainset / 'models'
                   / f'sweep_L{r["layer"]}_{r["head"]}_{args.backbone}')
         resdir.mkdir(parents=True, exist_ok=True)
         with open(resdir / 'dev.pkl', 'wb') as f:
             pickle.dump({'hyp': r['dev_hyp'], 'fileids': r['fid_dev']}, f)
         with open(resdir / 'evl.pkl', 'wb') as f:
             pickle.dump({'hyp': r['evl_hyp'], 'fileids': r['fid_evl']}, f)
-        sub = HERE / (f'g{args.group}_{args.trainset}_{args.backbone}_'
+        sub = LAB2_DIR / (f'g{args.group}_{args.trainset}_{args.backbone}_'
                       f'sweep_L{r["layer"]}_{r["head"]}.csv')
         create_submission_file(str(resdir), str(sub))
         print(f'  L{r["layer"]:>3d}  {r["head"]:24s}  dev MAE {r["dev_mae"]:6.3f}  '
@@ -474,14 +475,14 @@ def run_sweep(args):
     dev_ens = np.mean([r['dev_hyp'] for r in top3], axis=0)
     evl_ens = np.mean([r['evl_hyp'] for r in top3], axis=0)
     dev_mae_ens = float(mean_absolute_error(yd, dev_ens))
-    ens_dir = (HERE / 'lab2_data' / args.trainset / 'models'
+    ens_dir = (LAB2_DIR / 'lab2_data' / args.trainset / 'models'
                / f'sweep_ensemble_top3_{args.backbone}')
     ens_dir.mkdir(parents=True, exist_ok=True)
     with open(ens_dir / 'dev.pkl', 'wb') as f:
         pickle.dump({'hyp': dev_ens, 'fileids': fid_dev}, f)
     with open(ens_dir / 'evl.pkl', 'wb') as f:
         pickle.dump({'hyp': evl_ens, 'fileids': fid_evl}, f)
-    ens_sub = HERE / (f'g{args.group}_{args.trainset}_{args.backbone}_'
+    ens_sub = LAB2_DIR / (f'g{args.group}_{args.trainset}_{args.backbone}_'
                       f'ensemble_top3.csv')
     create_submission_file(str(ens_dir), str(ens_sub))
     rank1 = top3[0]['dev_mae']
@@ -491,7 +492,7 @@ def run_sweep(args):
           f'-> {ens_sub.name}')
 
     # CSV of all runs — name includes backbone so audeering / wavlm don't overwrite.
-    csv_path = HERE / f'sweep_results_{args.backbone}.csv'
+    csv_path = LAB2_DIR / f'sweep_results_{args.backbone}.csv'
     with open(csv_path, 'w', newline='') as f:
         w = csv.writer(f)
         w.writerow(['layer', 'head', 'seed', 'dev_mae', 'train_mae', 'gap', 'time_s'])
@@ -524,7 +525,7 @@ def run_sweep(args):
 # ---------------------------------------------------------------------
 
 def run_fusion(args):
-    datadir = str(HERE / 'lab2_data') + '/'
+    datadir = str(LAB2_DIR / 'lab2_data') + '/'
     device = select_device()
     bb_cfg = BACKBONES[args.backbone]
     layers = args.layers or bb_cfg['fusion_layers']
@@ -646,14 +647,14 @@ def run_fusion(args):
     # Submission CSVs for the top-3 fusion runs.
     print('\n========= TOP-3 FUSION SUBMISSION CSVs =========')
     for r in all_sorted[:3]:
-        resdir = (HERE / 'lab2_data' / args.trainset / 'models'
+        resdir = (LAB2_DIR / 'lab2_data' / args.trainset / 'models'
                   / f'{r["head"]}_{args.backbone}')
         resdir.mkdir(parents=True, exist_ok=True)
         with open(resdir / 'dev.pkl', 'wb') as f:
             pickle.dump({'hyp': r['dev_hyp'], 'fileids': r['fid_dev']}, f)
         with open(resdir / 'evl.pkl', 'wb') as f:
             pickle.dump({'hyp': r['evl_hyp'], 'fileids': r['fid_evl']}, f)
-        sub = HERE / (f'g{args.group}_{args.trainset}_{args.backbone}_'
+        sub = LAB2_DIR / (f'g{args.group}_{args.trainset}_{args.backbone}_'
                       f'{r["head"]}.csv')
         create_submission_file(str(resdir), str(sub))
         print(f'  {r["head"]:32s}  dev MAE {r["dev_mae"]:6.3f}  -> {sub.name}')
@@ -663,14 +664,14 @@ def run_fusion(args):
     dev_ens = np.mean([r['dev_hyp'] for r in top3], axis=0)
     evl_ens = np.mean([r['evl_hyp'] for r in top3], axis=0)
     dev_mae_ens = float(mean_absolute_error(yd, dev_ens))
-    ens_dir = (HERE / 'lab2_data' / args.trainset / 'models'
+    ens_dir = (LAB2_DIR / 'lab2_data' / args.trainset / 'models'
                / f'fusion_ensemble_top3_{args.backbone}')
     ens_dir.mkdir(parents=True, exist_ok=True)
     with open(ens_dir / 'dev.pkl', 'wb') as f:
         pickle.dump({'hyp': dev_ens, 'fileids': top3[0]['fid_dev']}, f)
     with open(ens_dir / 'evl.pkl', 'wb') as f:
         pickle.dump({'hyp': evl_ens, 'fileids': top3[0]['fid_evl']}, f)
-    ens_sub = HERE / (f'g{args.group}_{args.trainset}_{args.backbone}_'
+    ens_sub = LAB2_DIR / (f'g{args.group}_{args.trainset}_{args.backbone}_'
                       f'fusion_ensemble_top3.csv')
     create_submission_file(str(ens_dir), str(ens_sub))
     rank1 = top3[0]['dev_mae']
@@ -680,7 +681,7 @@ def run_fusion(args):
           f'-> {ens_sub.name}')
 
     # Per-run CSV including learned weights — name includes backbone.
-    csv_path = HERE / f'fusion_results_{args.backbone}.csv'
+    csv_path = LAB2_DIR / f'fusion_results_{args.backbone}.csv'
     with open(csv_path, 'w', newline='') as f:
         w = csv.writer(f)
         cols = ['head', 'seed', 'dev_mae', 'train_mae', 'gap', 'time_s'] \

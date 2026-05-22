@@ -34,9 +34,9 @@ Outputs:
   - g<group>_<trainset>_finetune_audeering_age.csv  (Kaggle submission)
 
 Usage:
-    python finetune_audeering_age.py                 # local default
-    python finetune_audeering_age.py --epochs 5
-    python finetune_audeering_age.py --trainset train --epochs 6 --batch-size 8 --grad-accum 2
+    python finetuning/finetune_audeering_age.py                 # local default
+    python finetuning/finetune_audeering_age.py --epochs 5
+    python finetuning/finetune_audeering_age.py --trainset train --epochs 6 --batch-size 8 --grad-accum 2
 """
 
 import argparse
@@ -53,8 +53,9 @@ from pathlib import Path
 # (wav2vec2 has a couple of these — GroupNorm in particular).
 os.environ.setdefault('PYTORCH_ENABLE_MPS_FALLBACK', '1')
 
-HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
+SCRIPT_DIR = Path(__file__).resolve().parent
+LAB2_DIR = SCRIPT_DIR.parent
+sys.path.insert(0, str(LAB2_DIR))
 
 import librosa
 import numpy as np
@@ -204,7 +205,7 @@ class RegressionTrainer(Trainer):
 # ---------------------------------------------------------------------
 
 def run(args):
-    datadir = HERE / 'lab2_data'
+    datadir = LAB2_DIR / 'lab2_data'
     device = select_device_str()
     print(f'device  : {device}')
     print(f'trainset: {args.trainset}')
@@ -267,7 +268,7 @@ def run(args):
 
     # ----- training -----
     suffix = f'_{args.run_id}' if args.run_id else ''
-    output_dir = (HERE / 'lab2_data' / args.trainset / 'models'
+    output_dir = (LAB2_DIR / 'lab2_data' / args.trainset / 'models'
                   / f'finetune_audeering_age{suffix}')
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -358,7 +359,7 @@ def run(args):
     with open(resdir / 'evl.pkl', 'wb') as f:
         pickle.dump({'hyp': evl_hyp,
                      'fileids': np.asarray(df_evl['fileid'].tolist())}, f)
-    sub_path = HERE / f'g{args.group}_{args.trainset}_finetune_audeering_age{suffix}.csv'
+    sub_path = LAB2_DIR / f'g{args.group}_{args.trainset}_finetune_audeering_age{suffix}.csv'
     create_submission_file(str(resdir), str(sub_path))
     print(f'  submission -> {sub_path.name}')
 
@@ -410,7 +411,7 @@ def run(args):
                   'policy before spending on GPU.')
 
     # CSV trajectory for offline plotting / comparison.
-    csv_path = HERE / f'finetune_results{suffix}.csv'
+    csv_path = LAB2_DIR / f'finetune_results{suffix}.csv'
     with open(csv_path, 'w', newline='') as f:
         w = csv.writer(f)
         w.writerow(['epoch', 'train_loss', 'dev_mae'])
@@ -467,7 +468,7 @@ def run_grid(args):
         print(f'  {i:>2d}. {run_id:<14s}  lr={lr:.0e}  epochs={epochs}  '
               f'top_layers={top_n}  seed={seed}')
 
-    grid_csv = HERE / f'grid_results_{args.trainset}.csv'
+    grid_csv = LAB2_DIR / f'grid_results_{args.trainset}.csv'
     results = []
 
     for i, (run_id, lr, epochs, top_n, seed) in enumerate(GRID, 1):
