@@ -302,7 +302,7 @@ def create_submission_file(resdir, filename):
     results_dev = pickle.load(open(f'{resdir}/dev.pkl', 'rb'))
     results_evl = pickle.load(open(f'{resdir}/evl.pkl', 'rb'))
 
-    with open(filename, 'w') as file:
+    with open(filename, 'w', newline='') as file:
         csv_writer = csv.writer(file) # CSV writer
         csv_writer.writerow(('fileId', 'Age')) # Header of the CSV
 
