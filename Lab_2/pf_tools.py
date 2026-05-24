@@ -29,7 +29,13 @@ class SLPdata(Dataset):
     RELEASE_CONFIGS = {'train_small': {'url': 'http://groups.tecnico.ulisboa.pt/speechproc/pf26/lab2/train_small.tgz' , 'checksum':'f25ce94bd4e85a77285a589509d20f6264d173a819ada8077f03c03c3f755ef4'},
                 'train': {'url': 'http://groups.tecnico.ulisboa.pt/speechproc/pf26/lab2/train.tgz' , 'checksum':'a5f3cb33c1a85c0d3ad099daf8928fa3af9e04ddfd6af88f71fdb1f475610384'},
                 'dev': {'url': 'http://groups.tecnico.ulisboa.pt/speechproc/pf26/lab2/dev.tgz' , 'checksum':'84dbe6d5508d681b7a45543c3464e5c76015a53bed6b01b14e6c47ac56aa2522'},
-                'evl': {'url': 'http://groups.tecnico.ulisboa.pt/speechproc/pf26/lab2/evl.tgz' , 'checksum':'2e135e4e56054be50c2673d4e4d3a5d7651222aceea6d0cb9038ae044edd8e53'}
+                'evl': {'url': 'http://groups.tecnico.ulisboa.pt/speechproc/pf26/lab2/evl.tgz' , 'checksum':'2e135e4e56054be50c2673d4e4d3a5d7651222aceea6d0cb9038ae044edd8e53'},
+                # Locally built partition (FalAR train_* shards streamed in by
+                # finetuning/build_train_falar.py). URL/checksum are sentinels —
+                # SLPdata.download_data() short-circuits when the folder exists,
+                # so they're never used. If the folder is missing the user must
+                # run the build script first; the helpful error is in __init__.
+                'big_train_falar': {'url': 'local://big_train_falar', 'checksum': None},
                 }
                    
     def __init__(self, root : str, dataset_id: str, transform_id: str = "feat", audio_transform : callable = None, chunk_size : int = -1, chunk_hop : int = -1, chunk_transform : callable = None) -> None:
@@ -93,8 +99,15 @@ class SLPdata(Dataset):
     def __len__(self):
         return len(self._walker)
                    
-    def download_data(self,  checksum : str = None) -> None:   
+    def download_data(self,  checksum : str = None) -> None:
         if not os.path.isdir(self.path):
+            if str(self.url).startswith('local://'):
+                raise RuntimeError(
+                    f"Partition '{self.path.name}' has no downloadable archive; "
+                    f"it is built locally. Expected folder at {self.path} with "
+                    f"info.csv and wav/. For 'big_train_falar', run: "
+                    f"python finetuning/build_train_falar.py"
+                )
             if not os.path.isfile(self.archive):
                 download_url_to_file(self.url, self.archive, hash_prefix=checksum)
             _extract_tar(self.archive)

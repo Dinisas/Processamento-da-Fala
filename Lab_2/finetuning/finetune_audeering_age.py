@@ -43,6 +43,7 @@ import argparse
 import copy
 import csv
 import gc
+import json
 import os
 import pickle
 import sys
@@ -57,6 +58,8 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 LAB2_DIR = SCRIPT_DIR.parent
 sys.path.insert(0, str(LAB2_DIR))
 
+from dataclasses import dataclass
+
 import librosa
 import numpy as np
 import pandas as pd
@@ -64,15 +67,18 @@ import torch
 import torch.nn as nn
 from datasets import Dataset, DatasetDict
 from sklearn.metrics import mean_absolute_error
+from torch.autograd import Function
 from tqdm import tqdm
 from transformers import (
     EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
+    Wav2Vec2Config,
     Wav2Vec2FeatureExtractor,
     Wav2Vec2ForSequenceClassification,
     logging as tf_logging,
 )
+from transformers.modeling_outputs import ModelOutput
 
 from pf_tools import create_submission_file
 
@@ -104,32 +110,64 @@ def load_partition_dataframe(datadir, partition):
     return df
 
 
-def build_dataset(df, feat_ext, duration=10.0, has_labels=True, desc='loading'):
-    """Load every audio file with librosa, run the feature extractor, and
-    store the (variable-length) `input_values` directly. Avoids HF's `Audio`
-    feature decoder which now requires `torchcodec`; uses the same librosa
-    path as the rest of the project. evl rows (no label) get a placeholder
-    of 0.0 — we never train on evl, only predict."""
-    max_samples = int(16000 * duration)
-    records = []
-    for _, row in tqdm(df.iterrows(), total=len(df), desc=desc):
+class W2V2LazyDataset(torch.utils.data.Dataset):
+    """Lazy torch Dataset that loads audio + runs the feature extractor on
+    __getitem__ (rather than eagerly building a HF Arrow table).
+
+    Eager Dataset.from_list works fine up to ~10k 10-second clips, but at
+    big_train_falar scale (38k+ clips) the cumulative element count blows
+    past int32 (~2.1B) and the underlying PyArrow ListArray offsets
+    overflow with `Python int too large to convert to C long`. This class
+    sidesteps the Arrow path entirely — HF Trainer accepts any torch
+    Dataset, so this is a drop-in replacement.
+
+    Records have:
+      - input_values : list[float]  (variable length, collator pads)
+      - labels       : float        (age in years; 0.0 for evl)
+      - speaker_idx  : int          (only when `has_speaker=True`)
+    """
+
+    def __init__(self, df, feat_ext, duration=10.0,
+                 has_labels=True, has_speaker=False):
+        self.df = df.reset_index(drop=True)
+        self.fe = feat_ext
+        self.duration = duration
+        self.has_labels = has_labels
+        self.has_speaker = has_speaker
+        self.max_samples = int(16000 * duration)
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        row = self.df.iloc[idx]
         audio, _ = librosa.load(
-            row['abs_path'], sr=16000, mono=True, duration=duration,
+            row['abs_path'], sr=16000, mono=True, duration=self.duration,
         )
-        inputs = feat_ext(
-            audio,
-            sampling_rate=16000,
-            max_length=max_samples,
-            truncation=True,
-            padding=False,                  # collator pads per-batch
+        inputs = self.fe(
+            audio, sampling_rate=16000,
+            max_length=self.max_samples,
+            truncation=True, padding=False,
         )
         rec = {'input_values': inputs['input_values'][0]}
-        if has_labels and not pd.isna(row['age']):
+        if self.has_labels and not pd.isna(row['age']):
             rec['labels'] = float(row['age'])
         else:
             rec['labels'] = 0.0
-        records.append(rec)
-    return Dataset.from_list(records)
+        if self.has_speaker:
+            rec['speaker_idx'] = int(row['speaker_idx'])
+        return rec
+
+
+def build_dataset(df, feat_ext, duration=10.0, has_labels=True,
+                  has_speaker=False, desc='loading'):
+    """Returns a W2V2LazyDataset (no audio is loaded yet — it happens on
+    __getitem__). The `desc` arg is kept for API compatibility but no progress
+    bar is shown because there's nothing to iterate at construction time."""
+    return W2V2LazyDataset(
+        df, feat_ext, duration=duration,
+        has_labels=has_labels, has_speaker=has_speaker,
+    )
 
 
 def freeze_lower_layers(model, n_top_layers_to_train):
@@ -149,7 +187,12 @@ def freeze_lower_layers(model, n_top_layers_to_train):
 class W2V2RegressionCollator:
     """Pad variable-length `input_values` to the longest in the batch and
     attach float `labels`. Avoids the wasteful 'pad-everything-to-10s'
-    approach when the batch happens to contain short clips."""
+    approach when the batch happens to contain short clips.
+
+    If every record in the batch carries `speaker_idx` (the speaker-adversarial
+    train fold), also attach a `speaker_labels` long tensor. Dev/evl batches
+    have no speaker_idx and skip this — compute_loss conditionally adds the
+    speaker CE term only when speaker_labels is present."""
 
     def __init__(self, feature_extractor):
         self.fe = feature_extractor
@@ -160,6 +203,10 @@ class W2V2RegressionCollator:
         batch['labels'] = torch.tensor(
             [f['labels'] for f in features], dtype=torch.float32
         )
+        if all('speaker_idx' in f for f in features):
+            batch['speaker_labels'] = torch.tensor(
+                [f['speaker_idx'] for f in features], dtype=torch.long
+            )
         return batch
 
 
@@ -169,7 +216,14 @@ def make_compute_metrics(y_mean=0.0, y_std=1.0):
     raw outputs live near 0; here we denormalise them before computing MAE/MSE
     against the raw-age reference labels."""
     def compute_metrics(eval_pred):
-        preds_norm = eval_pred.predictions.squeeze(-1)
+        preds = eval_pred.predictions
+        # In the speaker-adversarial setup eval_pred.predictions can be a
+        # tuple (age_logits, speaker_logits) if the speaker_logits weren't
+        # filtered out by config.keys_to_ignore_at_inference. Defensively
+        # pick the first element (age_logits) in that case.
+        if isinstance(preds, (tuple, list)):
+            preds = preds[0]
+        preds_norm = preds.squeeze(-1)
         preds = preds_norm * y_std + y_mean
         refs = eval_pred.label_ids                     # raw ages, never normalised
         return {
@@ -177,6 +231,125 @@ def make_compute_metrics(y_mean=0.0, y_std=1.0):
             'mse': float(np.mean((preds - refs) ** 2)),
         }
     return compute_metrics
+
+
+class GradientReversalFunction(Function):
+    """Forward: identity. Backward: multiplies incoming gradient by `-lambda`.
+
+    Standard DANN trick — placed between the shared backbone and the
+    adversarial speaker classifier head. The speaker head receives the
+    normal forward signal and trains to classify speakers; the backbone
+    receives the NEGATED speaker gradient, so it learns features that
+    confuse the speaker head while still solving age regression."""
+
+    @staticmethod
+    def forward(ctx, x, lambda_):
+        ctx.lambda_ = float(lambda_)
+        return x.view_as(x)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return -ctx.lambda_ * grad_output, None
+
+
+@dataclass
+class AgeSpeakerOutput(ModelOutput):
+    """Forward output of Wav2Vec2AgeSpeaker.
+
+    `logits` is the age scalar (same key the parent RegressionTrainer reads
+    via `outputs.logits`); `speaker_logits` is the per-speaker classification
+    output added for adversarial training. Eval / compute_metrics only look
+    at `.logits`, so they keep working unchanged."""
+    loss: torch.FloatTensor = None
+    logits: torch.FloatTensor = None
+    speaker_logits: torch.FloatTensor = None
+
+
+class Wav2Vec2AgeSpeaker(Wav2Vec2ForSequenceClassification):
+    """Wav2Vec2ForSequenceClassification + a speaker-adversarial head.
+
+    Two heads on the same pooled features:
+      - age regressor (parent's `self.classifier`, single scalar)
+      - speaker classifier (2-layer MLP, `n_speakers` outputs)
+
+    A GradientReversalFunction sits between the pooled features and the
+    speaker head. During backward, it flips the sign of the gradient
+    flowing to the backbone (and scales by `self.adv_lambda`). The speaker
+    head itself trains normally.
+
+    `n_speakers` is read from `config.n_speakers` (set by the caller before
+    `.from_pretrained`)."""
+
+    def __init__(self, config):
+        super().__init__(config)
+        n_speakers = int(getattr(config, 'n_speakers', 1))
+        cps = config.classifier_proj_size
+        self.speaker_classifier = nn.Sequential(
+            nn.Linear(cps, cps),
+            nn.ReLU(),
+            nn.Linear(cps, n_speakers),
+        )
+        self.adv_lambda = 0.0      # set per-step by SpeakerAdversarialTrainer
+        self.config.n_speakers = n_speakers
+        # Tell HF Trainer's prediction_step to skip the speaker classifier
+        # output when gathering inference predictions. Without this, the
+        # eval pred is a (age_logits, speaker_logits) tuple and compute_metrics
+        # breaks on `.squeeze(-1)` because tuples have no squeeze.
+        existing = list(getattr(self.config, 'keys_to_ignore_at_inference', None) or [])
+        if 'speaker_logits' not in existing:
+            existing.append('speaker_logits')
+        self.config.keys_to_ignore_at_inference = existing
+        # Initialise the new head with the same init scheme as the rest.
+        self.post_init()
+
+    def forward(
+        self,
+        input_values,
+        attention_mask=None,
+        labels=None,
+        speaker_labels=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+        **kwargs,
+    ):
+        # Re-implement the parent's forward up to the pooled features so we
+        # can branch the speaker head off the same intermediate tensor.
+        outputs = self.wav2vec2(
+            input_values,
+            attention_mask=attention_mask,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=True,
+        )
+        hidden_states = outputs[0]
+        hidden_states = self.projector(hidden_states)
+
+        # Attention-aware mean pool over time (matches parent's behaviour).
+        if attention_mask is None:
+            pooled = hidden_states.mean(dim=1)
+        else:
+            padding_mask = self._get_feature_vector_attention_mask(
+                hidden_states.shape[1], attention_mask,
+            )
+            hidden_states = hidden_states.masked_fill(
+                ~padding_mask.unsqueeze(-1), 0.0,
+            )
+            denom = padding_mask.sum(dim=1).clamp(min=1).unsqueeze(-1).float()
+            pooled = hidden_states.sum(dim=1) / denom
+
+        age_logits = self.classifier(pooled)
+
+        # Speaker head through gradient-reversal: forward is identity, backward
+        # multiplies the backbone-bound gradient by -lambda.
+        pooled_rev = GradientReversalFunction.apply(pooled, self.adv_lambda)
+        speaker_logits = self.speaker_classifier(pooled_rev)
+
+        return AgeSpeakerOutput(
+            loss=None,
+            logits=age_logits,
+            speaker_logits=speaker_logits,
+        )
 
 
 class RegressionTrainer(Trainer):
@@ -193,10 +366,65 @@ class RegressionTrainer(Trainer):
     def compute_loss(self, model, inputs, return_outputs=False,
                      num_items_in_batch=None):
         labels = inputs.pop('labels').float()
+        # Strip speaker_labels if present — vanilla RegressionTrainer ignores
+        # them (only SpeakerAdversarialTrainer below uses them).
+        inputs.pop('speaker_labels', None)
         normalised = (labels - self.y_mean) / self.y_std
         outputs = model(**inputs)
         logits = outputs.logits.squeeze(-1)
         loss = nn.functional.mse_loss(logits, normalised)
+        return (loss, outputs) if return_outputs else loss
+
+
+class SpeakerAdversarialTrainer(RegressionTrainer):
+    """RegressionTrainer + adversarial speaker classification loss.
+
+    Total loss = MSE(age) + CE(speaker).  The lambda used to scale the
+    speaker-gradient flowing back into the backbone lives in
+    `model.adv_lambda` (set per-step via the GradientReversalFunction). We
+    linearly ramp it from 0 to `adv_lambda_max` over the first
+    `adv_warmup_steps` optimizer steps — so the backbone first learns to
+    predict age before the adversary starts pushing back. The speaker head
+    itself trains at full strength regardless of lambda.
+
+    Eval-time forward passes don't carry `speaker_labels` (dev/evl speakers
+    are unseen), so the speaker-CE term is skipped automatically."""
+
+    adv_lambda_max = 0.05
+    adv_warmup_steps = 200
+
+    def compute_loss(self, model, inputs, return_outputs=False,
+                     num_items_in_batch=None):
+        labels = inputs.pop('labels').float()
+        speaker_labels = inputs.pop('speaker_labels', None)
+        normalised = (labels - self.y_mean) / self.y_std
+
+        # Ramp lambda only on the backbone-bound branch (the GRL).
+        if model.training:
+            step = self.state.global_step
+            lam = self.adv_lambda_max * min(
+                1.0, step / max(1, self.adv_warmup_steps)
+            )
+        else:
+            lam = 0.0
+        # Trainer wrapping might give us a DataParallel wrapper; reach inside.
+        target = model.module if hasattr(model, 'module') else model
+        target.adv_lambda = lam
+
+        outputs = model(**inputs)
+        age_logits = outputs.logits.squeeze(-1)
+        mse = nn.functional.mse_loss(age_logits, normalised)
+
+        if speaker_labels is not None and outputs.speaker_logits is not None:
+            ce = nn.functional.cross_entropy(
+                outputs.speaker_logits, speaker_labels.long(),
+            )
+            # The GRL has already flipped the sign on the backbone side and
+            # scaled by lambda — here we just sum (NOT subtract).
+            loss = mse + ce
+        else:
+            loss = mse
+
         return (loss, outputs) if return_outputs else loss
 
 
@@ -214,16 +442,58 @@ def run(args):
           f'effective batch: {args.batch_size * args.grad_accum}')
     print(f'lr      : {args.lr}')
 
+    # ----- pre-load manifest (needed to size the speaker head if --speaker-adv) -----
+    manifest = None
+    speaker_to_idx = None
+    n_speakers = 0
+    if args.split_manifest:
+        manifest_path = Path(args.split_manifest)
+        if not manifest_path.is_absolute():
+            manifest_path = LAB2_DIR / manifest_path
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        if args.speaker_adv:
+            if 'uuid_to_speaker' not in manifest:
+                raise ValueError(
+                    '--speaker-adv requires a manifest with `uuid_to_speaker` '
+                    '(produced by build_speaker_split_real.py from a partition '
+                    'that has ground-truth speaker_ids, e.g. big_train_falar). '
+                    'The clustering-based manifest lacks this mapping.'
+                )
+            train_inner_uuids = set(manifest['train_inner_uuids'])
+            train_speakers = sorted({
+                str(manifest['uuid_to_speaker'][u])
+                for u in train_inner_uuids
+                if u in manifest['uuid_to_speaker']
+            })
+            speaker_to_idx = {s: i for i, s in enumerate(train_speakers)}
+            n_speakers = len(speaker_to_idx)
+            print(f'  speaker-adversarial: {n_speakers} unique train speakers '
+                  f'will be classified by the adversary head')
+    elif args.speaker_adv:
+        raise ValueError('--speaker-adv requires --split-manifest '
+                         '(speaker IDs come from the manifest)')
+
     # ----- model -----
     print(f'\n-- loading audeering wav2vec2 (regression head) --')
     t0 = time.time()
     fe = Wav2Vec2FeatureExtractor.from_pretrained(AUD_MODEL_ID)
     tf_logging.set_verbosity_error()        # silence expected unexpected-keys
-    model = Wav2Vec2ForSequenceClassification.from_pretrained(
-        AUD_MODEL_ID,
-        num_labels=1,
-        problem_type='regression',
-    )
+
+    if args.speaker_adv:
+        config = Wav2Vec2Config.from_pretrained(
+            AUD_MODEL_ID, num_labels=1, problem_type='regression',
+        )
+        config.n_speakers = n_speakers
+        model = Wav2Vec2AgeSpeaker.from_pretrained(AUD_MODEL_ID, config=config)
+        print(f'  Wav2Vec2AgeSpeaker  head: {n_speakers} train speakers, '
+              f'lambda_max={args.adv_lambda:.3f}, warmup_steps={args.adv_warmup_steps}')
+    else:
+        model = Wav2Vec2ForSequenceClassification.from_pretrained(
+            AUD_MODEL_ID,
+            num_labels=1,
+            problem_type='regression',
+        )
     tf_logging.set_verbosity_warning()
 
     model.freeze_feature_encoder()
@@ -247,6 +517,58 @@ def run(args):
     df_evl   = load_partition_dataframe(datadir, 'evl')
     print(f'  {args.trainset}: {len(df_train)}   dev: {len(df_dev)}   evl: {len(df_evl)}')
 
+    # Speaker-disjoint internal split: when a manifest is loaded (above), replace
+    # the default train+dev partitions with the manifest's speaker-disjoint fold.
+    # evl is left untouched.
+    if manifest is not None:
+        manifest_part = manifest.get('partition') or manifest.get('trainset')
+        if manifest_part and manifest_part != args.trainset:
+            print(f'  WARNING: manifest was built from {manifest_part!r} '
+                  f'but --trainset is {args.trainset!r}; UUIDs may not match.')
+
+        train_inner = set(manifest['train_inner_uuids'])
+        dev_inner   = set(manifest['dev_inner_uuids'])
+        if train_inner & dev_inner:
+            raise ValueError('manifest train_inner and dev_inner overlap; '
+                             'something is wrong with the split file')
+
+        # df_train currently holds the full --trainset partition; carve it.
+        base = df_train
+        df_train = base[base['fileid'].isin(train_inner)].reset_index(drop=True)
+        if args.use_lab_dev:
+            # --use-lab-dev: train on train_inner (so adversary speaker labels
+            # still work) but evaluate on lab dev (the 117-row official metric)
+            # instead of dev_inner. The manifest is used purely for the
+            # speaker-adversarial labels + train carving; dev_inner is ignored.
+            # df_dev is whatever load_partition_dataframe(datadir, 'dev')
+            # already produced above — keep it.
+            missing_t = len(train_inner) - len(df_train)
+            print(f'  [split-manifest + --use-lab-dev] '
+                  f'train_inner: {len(df_train)} '
+                  f'(missing UUIDs: {missing_t}) | '
+                  f'dev: lab dev ({len(df_dev)} rows)')
+        else:
+            df_dev = base[base['fileid'].isin(dev_inner)].reset_index(drop=True)
+            missing_t = len(train_inner) - len(df_train)
+            missing_d = len(dev_inner) - len(df_dev)
+            print(f'  [split-manifest] speaker-disjoint fold')
+            print(f'    train_inner: {len(df_train)}   '
+                  f'dev_inner: {len(df_dev)}'
+                  + (f'   (missing UUIDs: train_inner={missing_t} '
+                     f'dev_inner={missing_d})' if (missing_t or missing_d) else ''))
+        if len(df_train) == 0 or len(df_dev) == 0:
+            raise RuntimeError('split-manifest produced an empty fold; '
+                               'check that --trainset matches the manifest.')
+
+        # Attach speaker_idx for adversarial training (train only).
+        if args.speaker_adv:
+            u2s = manifest['uuid_to_speaker']
+            df_train['speaker_idx'] = df_train['fileid'].map(
+                lambda u: speaker_to_idx[str(u2s[u])]
+            ).astype(int)
+            print(f'    speaker_idx assigned: {df_train["speaker_idx"].nunique()} '
+                  f'unique speaker indices in train_inner')
+
     # Target normalisation stats computed on the training fold only. Raw
     # labels stay raw inside the Dataset; the RegressionTrainer normalises
     # them just before computing MSE, and compute_metrics / final inference
@@ -256,15 +578,18 @@ def run(args):
     y_std  = float(np.std(train_ages) + 1e-8)
     print(f'  target normalisation: y_mean={y_mean:.2f}  y_std={y_std:.2f}')
 
-    ds = DatasetDict({
+    # Lazy torch Datasets — no Arrow table, no int32-offset overflow. Audio
+    # is loaded on __getitem__; collator handles per-batch padding.
+    ds = {
         'train': build_dataset(df_train, fe, duration=args.duration,
-                               has_labels=True,  desc=f'{args.trainset:>10s}'),
+                               has_labels=True,
+                               has_speaker=args.speaker_adv,
+                               desc=f'{args.trainset:>10s}'),
         'dev':   build_dataset(df_dev,   fe, duration=args.duration,
                                has_labels=True,  desc=f'{"dev":>10s}'),
         'evl':   build_dataset(df_evl,   fe, duration=args.duration,
                                has_labels=False, desc=f'{"evl":>10s}'),
-    })
-    ds.set_format('torch', columns=['input_values', 'labels'])
+    }
 
     # ----- training -----
     suffix = f'_{args.run_id}' if args.run_id else ''
@@ -295,8 +620,17 @@ def run(args):
         metric_for_best_model='eval_mae',
         greater_is_better=False,
         report_to=[],                       # no wandb / tensorboard
-        dataloader_num_workers=0,           # MPS can be picky with workers
+        # MPS can be picky with workers; CUDA benefits from parallel
+        # audio loading (lazy dataset loads from disk on every __getitem__).
+        dataloader_num_workers=(2 if device == 'cuda' else 0),
         remove_unused_columns=False,
+        # Without this, HF Trainer auto-detects label_names by scanning the
+        # model.forward signature for parameters containing 'label'. With
+        # the speaker-adv head, that picks up BOTH 'labels' and
+        # 'speaker_labels' — and on dev batches (no speaker_labels) it
+        # treats has_labels=False, skipping loss/compute_metrics entirely.
+        # Pin it to the actual label name.
+        label_names=['labels'],
         # only enable fp16 on CUDA; MPS / CPU stick with fp32
         fp16=(device == 'cuda' and not args.no_fp16),
         gradient_checkpointing=args.gradient_checkpointing,
@@ -310,7 +644,8 @@ def run(args):
             early_stopping_threshold=0.01,
         ))
 
-    trainer = RegressionTrainer(
+    trainer_cls = SpeakerAdversarialTrainer if args.speaker_adv else RegressionTrainer
+    trainer = trainer_cls(
         model=model,
         args=training_args,
         train_dataset=ds['train'],
@@ -321,6 +656,9 @@ def run(args):
     )
     trainer.y_mean = y_mean
     trainer.y_std  = y_std
+    if args.speaker_adv:
+        trainer.adv_lambda_max    = float(args.adv_lambda)
+        trainer.adv_warmup_steps  = int(args.adv_warmup_steps)
 
     if use_early_stop:
         print(f'\n-- training (max {n_epochs} epochs, '
@@ -552,8 +890,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument('--trainset', default='train_small',
-                        choices=('train_small', 'train'),
-                        help='training partition (default train_small)')
+                        choices=('train_small', 'train', 'big_train_falar'),
+                        help='training partition (default train_small). '
+                             '"big_train_falar" is the FalAR-streamed expansion '
+                             'built by finetuning/build_train_falar.py — only '
+                             'works after that script has been run.')
     parser.add_argument('--epochs', type=int, default=3,
                         help='number of training epochs (default 3). '
                              'Ignored when --max-epochs is given.')
@@ -590,6 +931,40 @@ def main():
                         help='unique tag appended to output paths (checkpoint '
                              'dir, submission CSV, trajectory CSV). Required '
                              'in --grid mode (set automatically).')
+    parser.add_argument('--split-manifest', default=None,
+                        help='path to a speaker-disjoint split JSON produced '
+                             'by build_speaker_split.py. When set, the '
+                             '--trainset partition is carved into '
+                             'train_inner / dev_inner by the manifest, and '
+                             'dev_inner replaces the default dev partition. '
+                             'evl is left untouched. Use to measure the honest '
+                             'speaker-disjoint dev MAE (Phase 3).')
+    parser.add_argument('--speaker-adv', action='store_true',
+                        help='speaker-adversarial finetuning (DANN). Requires '
+                             '--split-manifest with a `uuid_to_speaker` field '
+                             '(produced by build_speaker_split_real.py from a '
+                             'partition with ground-truth speaker_ids, e.g. '
+                             'big_train_falar). Adds a gradient-reversal '
+                             'speaker-classifier head that pushes the '
+                             'backbone toward speaker-invariant features '
+                             'while still solving age regression.')
+    parser.add_argument('--use-lab-dev', action='store_true',
+                        help='when --split-manifest is set, use lab dev (the '
+                             '117-row official metric) as the eval set instead '
+                             'of dev_inner from the manifest. Training data is '
+                             'still carved by train_inner_uuids so adversarial '
+                             'speaker labels keep working. Lets you compare '
+                             'speaker-adv runs directly against the 4.91-style '
+                             'lab dev baseline.')
+    parser.add_argument('--adv-lambda', type=float, default=0.05,
+                        help='maximum lambda for the gradient-reversal layer '
+                             '(default 0.05). Higher = stronger speaker-'
+                             'invariance pressure on the backbone.')
+    parser.add_argument('--adv-warmup-steps', type=int, default=200,
+                        help='optimizer steps to linearly ramp lambda from 0 '
+                             'to --adv-lambda (default 200). Lets the backbone '
+                             'first learn the age task before the adversary '
+                             'starts pushing back.')
     parser.add_argument('--grid', action='store_true',
                         help='run the predefined GRID of fine-tune configs. '
                              'Cells use early stopping; the per-cell `epochs` '

@@ -101,6 +101,19 @@ BACKBONES = {
         'note': 'WavLM Base+, the exact backbone Yang et al. arXiv:2502.12007 used. '
                 '12 transformer layers, 768-d, purely SSL (no supervised fine-tune).',
     },
+    'xlsr53': {
+        'model_id': 'facebook/wav2vec2-large-xlsr-53',
+        'model_class': Wav2Vec2Model,
+        'prefix': 'xlsr53',
+        # Same wav2vec2-large architecture as audeering (24 layers, 1024-d), so the
+        # same layer choices port over. Different pretraining: pure SSL on 53
+        # languages including Portuguese, no supervised age head.
+        'layers': [-1, 16, 12],
+        'fusion_layers': [-1, 20, 16, 12, 8],
+        'note': 'wav2vec2-large pretrained SSL on 53 languages incl. Portuguese '
+                '(no supervised fine-tune). Same architecture as audeering — '
+                '24 transformer layers, 1024-d — different pretraining data.',
+    },
 }
 
 
@@ -702,8 +715,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument('--trainset', default='train_small',
-                        choices=('train_small', 'train'),
-                        help='training partition (default train_small)')
+                        choices=('train_small', 'train', 'big_train_falar'),
+                        help='training partition (default train_small). '
+                             '"big_train_falar" is the FalAR-streamed expansion '
+                             'built by finetuning/build_train_falar.py — only '
+                             'works after that script has been run.')
     parser.add_argument('--duration', type=float, default=10.0,
                         help='max audio duration in seconds (default 10)')
     parser.add_argument('--group', default='07',
@@ -729,8 +745,11 @@ def main():
                              '"audeering" = wav2vec2-large supervised-fine-tuned on '
                              'TIMIT/VoxCeleb2/Common Voice/aGender. '
                              '"wavlm" = WavLM Base+ (the paper\'s actual backbone, '
-                             'purely SSL, 12 layers, 768-d). Caches are kept under '
-                             'separate directories per backbone, so switching is safe.')
+                             'purely SSL, 12 layers, 768-d). '
+                             '"xlsr53" = wav2vec2-large XLS-R 53, purely SSL on 53 '
+                             'languages incl. Portuguese (same arch as audeering, '
+                             'no age supervision). Caches are kept under separate '
+                             'directories per backbone, so switching is safe.')
     args = parser.parse_args()
     if args.fusion:
         run_fusion(args)
