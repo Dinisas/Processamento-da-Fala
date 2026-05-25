@@ -715,11 +715,14 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument('--trainset', default='train_small',
-                        choices=('train_small', 'train', 'big_train_falar'),
+                        choices=('train_small', 'train', 'big_train_falar',
+                                 'big_train_diversified', 'lab_train_old_boost'),
                         help='training partition (default train_small). '
                              '"big_train_falar" is the FalAR-streamed expansion '
-                             'built by finetuning/build_train_falar.py — only '
-                             'works after that script has been run.')
+                             '(many utts per speaker). "big_train_diversified" is '
+                             'the SAA-style 1-utt-per-speaker variant. '
+                             '"lab_train_old_boost" augments lab train with extra '
+                             'FalAR utts for 60+ speakers.')
     parser.add_argument('--duration', type=float, default=10.0,
                         help='max audio duration in seconds (default 10)')
     parser.add_argument('--group', default='07',

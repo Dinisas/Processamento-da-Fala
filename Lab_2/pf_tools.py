@@ -36,6 +36,21 @@ class SLPdata(Dataset):
                 # so they're never used. If the folder is missing the user must
                 # run the build script first; the helpful error is in __init__.
                 'big_train_falar': {'url': 'local://big_train_falar', 'checksum': None},
+                # Same family as big_train_falar but built with 1 utterance per
+                # unique speaker — SAA-style maximum diversity (built by
+                # finetuning/build_train_diversified.py).
+                'big_train_diversified': {'url': 'local://big_train_diversified', 'checksum': None},
+                # Lab train + extra FalAR utts for 60+ speakers (built by
+                # finetuning/build_old_speaker_boost.py).
+                'lab_train_old_boost': {'url': 'local://lab_train_old_boost', 'checksum': None},
+                # Sub-sampled variants of lab_train_old_boost for the dose-
+                # response sweep (built by finetuning/subsample_old_boost.py).
+                'lab_train_old_boost_n3': {'url': 'local://lab_train_old_boost_n3', 'checksum': None},
+                'lab_train_old_boost_n4': {'url': 'local://lab_train_old_boost_n4', 'checksum': None},
+                'lab_train_old_boost_n5': {'url': 'local://lab_train_old_boost_n5', 'checksum': None},
+                'lab_train_old_boost_n6': {'url': 'local://lab_train_old_boost_n6', 'checksum': None},
+                'lab_train_old_boost_n7': {'url': 'local://lab_train_old_boost_n7', 'checksum': None},
+                'lab_train_old_boost_n8': {'url': 'local://lab_train_old_boost_n8', 'checksum': None},
                 }
                    
     def __init__(self, root : str, dataset_id: str, transform_id: str = "feat", audio_transform : callable = None, chunk_size : int = -1, chunk_hop : int = -1, chunk_transform : callable = None) -> None:

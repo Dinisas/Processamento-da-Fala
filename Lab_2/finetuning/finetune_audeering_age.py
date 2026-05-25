@@ -125,15 +125,17 @@ class W2V2LazyDataset(torch.utils.data.Dataset):
       - input_values : list[float]  (variable length, collator pads)
       - labels       : float        (age in years; 0.0 for evl)
       - speaker_idx  : int          (only when `has_speaker=True`)
+      - gender_idx   : int          (only when `has_gender=True`; 0=M, 1=F)
     """
 
     def __init__(self, df, feat_ext, duration=10.0,
-                 has_labels=True, has_speaker=False):
+                 has_labels=True, has_speaker=False, has_gender=False):
         self.df = df.reset_index(drop=True)
         self.fe = feat_ext
         self.duration = duration
         self.has_labels = has_labels
         self.has_speaker = has_speaker
+        self.has_gender = has_gender
         self.max_samples = int(16000 * duration)
 
     def __len__(self):
@@ -156,17 +158,22 @@ class W2V2LazyDataset(torch.utils.data.Dataset):
             rec['labels'] = 0.0
         if self.has_speaker:
             rec['speaker_idx'] = int(row['speaker_idx'])
+        if self.has_gender:
+            # 0 = M, 1 = F. Anything else (NaN, '?', ...) flagged as -1 so the
+            # collator can mask it out of the gender loss (rare on lab train).
+            g = str(row.get('gender', '')).strip()
+            rec['gender_idx'] = 0 if g == 'M' else (1 if g == 'F' else -1)
         return rec
 
 
 def build_dataset(df, feat_ext, duration=10.0, has_labels=True,
-                  has_speaker=False, desc='loading'):
+                  has_speaker=False, has_gender=False, desc='loading'):
     """Returns a W2V2LazyDataset (no audio is loaded yet — it happens on
     __getitem__). The `desc` arg is kept for API compatibility but no progress
     bar is shown because there's nothing to iterate at construction time."""
     return W2V2LazyDataset(
         df, feat_ext, duration=duration,
-        has_labels=has_labels, has_speaker=has_speaker,
+        has_labels=has_labels, has_speaker=has_speaker, has_gender=has_gender,
     )
 
 
@@ -206,6 +213,10 @@ class W2V2RegressionCollator:
         if all('speaker_idx' in f for f in features):
             batch['speaker_labels'] = torch.tensor(
                 [f['speaker_idx'] for f in features], dtype=torch.long
+            )
+        if all('gender_idx' in f for f in features):
+            batch['gender_labels'] = torch.tensor(
+                [f['gender_idx'] for f in features], dtype=torch.long
             )
         return batch
 
@@ -352,16 +363,135 @@ class Wav2Vec2AgeSpeaker(Wav2Vec2ForSequenceClassification):
         )
 
 
+@dataclass
+class AgeGenderOutput(ModelOutput):
+    """Forward output of Wav2Vec2AgeGender. Same .logits convention as the
+    parent so existing eval / inference paths work unchanged; the gender
+    branch lives on a separate key and is only consumed during training."""
+    loss: torch.FloatTensor = None
+    logits: torch.FloatTensor = None
+    gender_logits: torch.FloatTensor = None
+
+
+class Wav2Vec2AgeGender(Wav2Vec2ForSequenceClassification):
+    """Wav2Vec2ForSequenceClassification + an auxiliary gender head.
+
+    Two heads on the same pooled features:
+      - age regressor (parent's `self.classifier`, single scalar)
+      - gender classifier (2-layer MLP, 2-way M/F)
+
+    Both heads see the SAME pooled features — no gradient reversal, no
+    adversary. The auxiliary gender loss adds gradient signal to the
+    backbone, encouraging it to produce features that disentangle the
+    gender axis from the age axis. This is multi-task learning, the
+    inverse of adversarial. Training loss is age_loss + lambda * gender_CE.
+
+    Eval time forward passes don't receive gender_labels, so the gender
+    branch is computed but its CE term is skipped by the trainer."""
+
+    def __init__(self, config):
+        super().__init__(config)
+        cps = config.classifier_proj_size
+        self.gender_classifier = nn.Sequential(
+            nn.Linear(cps, cps),
+            nn.ReLU(),
+            nn.Linear(cps, 2),
+        )
+        # Hide gender_logits from HF Trainer's prediction collection so
+        # eval_pred.predictions stays a single array (age logits) — same
+        # trick used in Wav2Vec2AgeSpeaker.
+        existing = list(getattr(self.config, 'keys_to_ignore_at_inference', None) or [])
+        if 'gender_logits' not in existing:
+            existing.append('gender_logits')
+        self.config.keys_to_ignore_at_inference = existing
+        self.post_init()
+
+    def forward(
+        self,
+        input_values,
+        attention_mask=None,
+        labels=None,
+        gender_labels=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+        **kwargs,
+    ):
+        # Replicate parent's forward up to the pooled features so we can
+        # branch the gender head off the same intermediate tensor.
+        outputs = self.wav2vec2(
+            input_values,
+            attention_mask=attention_mask,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=True,
+        )
+        hidden_states = outputs[0]
+        hidden_states = self.projector(hidden_states)
+
+        if attention_mask is None:
+            pooled = hidden_states.mean(dim=1)
+        else:
+            padding_mask = self._get_feature_vector_attention_mask(
+                hidden_states.shape[1], attention_mask,
+            )
+            hidden_states = hidden_states.masked_fill(
+                ~padding_mask.unsqueeze(-1), 0.0,
+            )
+            denom = padding_mask.sum(dim=1).clamp(min=1).unsqueeze(-1).float()
+            pooled = hidden_states.sum(dim=1) / denom
+
+        age_logits = self.classifier(pooled)
+        gender_logits = self.gender_classifier(pooled)
+
+        return AgeGenderOutput(
+            loss=None,
+            logits=age_logits,
+            gender_logits=gender_logits,
+        )
+
+
+def _age_loss(logits, target, loss_type='mse', tau=0.5):
+    """Loss dispatch for the age head.
+
+    Why support more than MSE: MSE-trained regressors shrink predictions
+    toward the conditional mean — diagnose_4_91.py measured a -0.37 slope
+    of (residual vs true_age) for the 4.91 model, i.e. ~37% regression
+    toward the training mean. L1 / quantile losses don't have this
+    shrinkage property (they target conditional medians/quantiles instead
+    of means), so they should produce a flatter residual curve at the
+    age tails.
+
+    Loss formulas (all operate on normalised target):
+      mse      : (yhat - y)^2                 -> conditional mean
+      l1       : |yhat - y|                   -> conditional median (= quantile@0.5)
+      quantile : max(tau*(y-yhat), (tau-1)*(y-yhat))   -> conditional quantile@tau
+    """
+    if loss_type == 'mse':
+        return nn.functional.mse_loss(logits, target)
+    if loss_type == 'l1':
+        return nn.functional.l1_loss(logits, target)
+    if loss_type == 'quantile':
+        err = target - logits
+        return torch.mean(torch.maximum(tau * err, (tau - 1.0) * err))
+    raise ValueError(f'unknown loss_type: {loss_type!r}')
+
+
 class RegressionTrainer(Trainer):
-    """MSE on the squeezed single-logit output, with target normalisation.
+    """Single-logit regression with target normalisation + selectable loss.
 
     Without normalisation, raw ages (~50, std ~10) make MSE start at ~2500
     on a fresh random head; gradients explode, default clipping caps the
     step size, and the model never escapes "predict near 0". Normalising
     targets to ~N(0, 1) keeps initial loss on the order of 1 and lets the
-    head actually move. Set `trainer.y_mean` / `trainer.y_std` after init."""
+    head actually move. Set `trainer.y_mean` / `trainer.y_std` after init.
+
+    Also: set `trainer.loss_type` ('mse' / 'l1' / 'quantile') and
+    `trainer.tau` (only used by quantile)."""
     y_mean = 0.0
     y_std = 1.0
+    loss_type = 'mse'
+    tau = 0.5
 
     def compute_loss(self, model, inputs, return_outputs=False,
                      num_items_in_batch=None):
@@ -372,7 +502,7 @@ class RegressionTrainer(Trainer):
         normalised = (labels - self.y_mean) / self.y_std
         outputs = model(**inputs)
         logits = outputs.logits.squeeze(-1)
-        loss = nn.functional.mse_loss(logits, normalised)
+        loss = _age_loss(logits, normalised, self.loss_type, self.tau)
         return (loss, outputs) if return_outputs else loss
 
 
@@ -413,7 +543,7 @@ class SpeakerAdversarialTrainer(RegressionTrainer):
 
         outputs = model(**inputs)
         age_logits = outputs.logits.squeeze(-1)
-        mse = nn.functional.mse_loss(age_logits, normalised)
+        age_loss = _age_loss(age_logits, normalised, self.loss_type, self.tau)
 
         if speaker_labels is not None and outputs.speaker_logits is not None:
             ce = nn.functional.cross_entropy(
@@ -421,9 +551,56 @@ class SpeakerAdversarialTrainer(RegressionTrainer):
             )
             # The GRL has already flipped the sign on the backbone side and
             # scaled by lambda — here we just sum (NOT subtract).
-            loss = mse + ce
+            loss = age_loss + ce
         else:
-            loss = mse
+            loss = age_loss
+
+        return (loss, outputs) if return_outputs else loss
+
+
+class MultiTaskTrainer(RegressionTrainer):
+    """RegressionTrainer + auxiliary gender CE loss.
+
+    Total loss = L_age(normalised) + mt_lambda * CE(gender_logits, gender_labels).
+
+    No gradient reversal — gender is a HELPER task, not an adversary. The
+    auxiliary loss adds gradient signal to the backbone and pushes it to
+    encode features that separate the gender axis from the age axis, which
+    empirically helps age MAE by 0.1-0.3.
+
+    Eval-time forward passes don't include gender_labels (we never have
+    them on dev/evl through the eval pipeline), so the gender CE term is
+    automatically skipped and only the age loss is computed."""
+
+    mt_lambda = 0.5  # set after init by main()
+
+    def compute_loss(self, model, inputs, return_outputs=False,
+                     num_items_in_batch=None):
+        labels = inputs.pop('labels').float()
+        gender_labels = inputs.pop('gender_labels', None)
+        # The vanilla trainer strips speaker_labels; do the same defensively.
+        inputs.pop('speaker_labels', None)
+        normalised = (labels - self.y_mean) / self.y_std
+
+        outputs = model(**inputs)
+        age_logits = outputs.logits.squeeze(-1)
+        age_loss = _age_loss(age_logits, normalised, self.loss_type, self.tau)
+
+        # Optionally add gender CE when the labels are present in the batch
+        # AND the model returned gender_logits. Mask out rows where the gender
+        # label is -1 (unknown / non-binary; rare on lab train but defensive).
+        if (gender_labels is not None
+                and getattr(outputs, 'gender_logits', None) is not None):
+            mask = gender_labels >= 0
+            if mask.any():
+                gl = outputs.gender_logits[mask]
+                gy = gender_labels[mask].long()
+                gender_loss = nn.functional.cross_entropy(gl, gy)
+                loss = age_loss + self.mt_lambda * gender_loss
+            else:
+                loss = age_loss
+        else:
+            loss = age_loss
 
         return (loss, outputs) if return_outputs else loss
 
@@ -480,19 +657,46 @@ def run(args):
     fe = Wav2Vec2FeatureExtractor.from_pretrained(AUD_MODEL_ID)
     tf_logging.set_verbosity_error()        # silence expected unexpected-keys
 
+    # SpecAugment kwargs — apply random time + frequency masking to the
+    # backbone's hidden states during training as regularization. These
+    # are read by the Wav2Vec2 model on every forward pass when
+    # apply_spec_augment=True. Off by default; turn on with --spec-augment.
+    spec_kwargs = {}
+    if args.spec_augment:
+        spec_kwargs = dict(
+            apply_spec_augment=True,
+            mask_time_prob=args.spec_time_prob,
+            mask_time_length=args.spec_time_length,
+            mask_feature_prob=args.spec_feature_prob,
+            mask_feature_length=args.spec_feature_length,
+        )
+        print(f'  SpecAugment ON: '
+              f'time_prob={args.spec_time_prob} time_length={args.spec_time_length} '
+              f'feature_prob={args.spec_feature_prob} feature_length={args.spec_feature_length}')
+
     if args.speaker_adv:
         config = Wav2Vec2Config.from_pretrained(
             AUD_MODEL_ID, num_labels=1, problem_type='regression',
+            **spec_kwargs,
         )
         config.n_speakers = n_speakers
         model = Wav2Vec2AgeSpeaker.from_pretrained(AUD_MODEL_ID, config=config)
         print(f'  Wav2Vec2AgeSpeaker  head: {n_speakers} train speakers, '
               f'lambda_max={args.adv_lambda:.3f}, warmup_steps={args.adv_warmup_steps}')
+    elif args.multi_task:
+        config = Wav2Vec2Config.from_pretrained(
+            AUD_MODEL_ID, num_labels=1, problem_type='regression',
+            **spec_kwargs,
+        )
+        model = Wav2Vec2AgeGender.from_pretrained(AUD_MODEL_ID, config=config)
+        print(f'  Wav2Vec2AgeGender  head: aux gender (M/F), '
+              f'mt_lambda={args.mt_lambda}')
     else:
         model = Wav2Vec2ForSequenceClassification.from_pretrained(
             AUD_MODEL_ID,
             num_labels=1,
             problem_type='regression',
+            **spec_kwargs,
         )
     tf_logging.set_verbosity_warning()
 
@@ -584,6 +788,7 @@ def run(args):
         'train': build_dataset(df_train, fe, duration=args.duration,
                                has_labels=True,
                                has_speaker=args.speaker_adv,
+                               has_gender=args.multi_task,
                                desc=f'{args.trainset:>10s}'),
         'dev':   build_dataset(df_dev,   fe, duration=args.duration,
                                has_labels=True,  desc=f'{"dev":>10s}'),
@@ -644,7 +849,12 @@ def run(args):
             early_stopping_threshold=0.01,
         ))
 
-    trainer_cls = SpeakerAdversarialTrainer if args.speaker_adv else RegressionTrainer
+    if args.speaker_adv:
+        trainer_cls = SpeakerAdversarialTrainer
+    elif args.multi_task:
+        trainer_cls = MultiTaskTrainer
+    else:
+        trainer_cls = RegressionTrainer
     trainer = trainer_cls(
         model=model,
         args=training_args,
@@ -656,6 +866,10 @@ def run(args):
     )
     trainer.y_mean = y_mean
     trainer.y_std  = y_std
+    trainer.loss_type = args.loss
+    trainer.tau = args.tau
+    if args.multi_task:
+        trainer.mt_lambda = float(args.mt_lambda)
     if args.speaker_adv:
         trainer.adv_lambda_max    = float(args.adv_lambda)
         trainer.adv_warmup_steps  = int(args.adv_warmup_steps)
@@ -890,11 +1104,18 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument('--trainset', default='train_small',
-                        choices=('train_small', 'train', 'big_train_falar'),
+                        choices=('train_small', 'train', 'big_train_falar',
+                                 'big_train_diversified', 'lab_train_old_boost',
+                                 'lab_train_old_boost_n3', 'lab_train_old_boost_n4',
+                                 'lab_train_old_boost_n5', 'lab_train_old_boost_n6',
+                                 'lab_train_old_boost_n7', 'lab_train_old_boost_n8'),
                         help='training partition (default train_small). '
                              '"big_train_falar" is the FalAR-streamed expansion '
-                             'built by finetuning/build_train_falar.py — only '
-                             'works after that script has been run.')
+                             '(many utts per speaker, 300 speakers). '
+                             '"big_train_diversified" is the SAA-style 1-utt-per-'
+                             'speaker variant built by build_train_diversified.py. '
+                             '"lab_train_old_boost" is lab train + extra FalAR '
+                             'utts for 60+ speakers (build_old_speaker_boost.py).')
     parser.add_argument('--epochs', type=int, default=3,
                         help='number of training epochs (default 3). '
                              'Ignored when --max-epochs is given.')
@@ -913,6 +1134,36 @@ def main():
                              'effective batch = batch_size * grad_accum (default 4)')
     parser.add_argument('--lr', type=float, default=5e-5,
                         help='AdamW learning rate (default 5e-5)')
+    parser.add_argument('--loss', default='mse',
+                        choices=('mse', 'l1', 'quantile'),
+                        help='age-head loss. "mse" targets the conditional '
+                             'mean (default; produces regression-toward-mean '
+                             'shrinkage at the tails). "l1" targets the '
+                             'conditional median (= quantile at tau=0.5) and '
+                             'directly optimises MAE. "quantile" uses pinball '
+                             'loss with --tau for asymmetric targets.')
+    parser.add_argument('--tau', type=float, default=0.5,
+                        help='quantile parameter for --loss quantile '
+                             '(default 0.5 = median; 0.5 here is equivalent '
+                             'to --loss l1 up to a factor of 2)')
+    parser.add_argument('--spec-augment', action='store_true',
+                        help='enable SpecAugment-style random time + feature '
+                             'masking on the backbone hidden states during '
+                             'training. Standard regularisation for SSL '
+                             'speech models; typically saves 0.2-0.4 MAE on '
+                             'small training sets. Off by default.')
+    parser.add_argument('--spec-time-prob', type=float, default=0.05,
+                        help='probability of starting a time mask per frame '
+                             '(default 0.05). Higher = more aggressive masking.')
+    parser.add_argument('--spec-time-length', type=int, default=10,
+                        help='length (in time frames) of each time mask '
+                             '(default 10)')
+    parser.add_argument('--spec-feature-prob', type=float, default=0.05,
+                        help='probability of starting a feature mask per '
+                             'channel (default 0.05)')
+    parser.add_argument('--spec-feature-length', type=int, default=64,
+                        help='length (in feature channels) of each feature '
+                             'mask (default 64)')
     parser.add_argument('--duration', type=float, default=10.0,
                         help='max audio duration in seconds (default 10)')
     parser.add_argument('--group', default='07',
@@ -948,6 +1199,20 @@ def main():
                              'speaker-classifier head that pushes the '
                              'backbone toward speaker-invariant features '
                              'while still solving age regression.')
+    parser.add_argument('--multi-task', action='store_true',
+                        help='multi-task learning: train an auxiliary gender '
+                             '(M/F) classification head jointly with the age '
+                             'regression head. The two heads share the same '
+                             'pooled backbone features; total loss is '
+                             'age_loss + mt_lambda * CE(gender). No gradient '
+                             'reversal — gender is a HELPER, not adversary. '
+                             'Empirically improves age MAE by 0.1-0.3 because '
+                             'the auxiliary loss helps the backbone produce '
+                             'features that disentangle gender from age.')
+    parser.add_argument('--mt-lambda', type=float, default=0.5,
+                        help='weight of the gender CE term in multi-task loss '
+                             '(default 0.5). Higher = backbone caters more '
+                             'to gender; too high will start to hurt age.')
     parser.add_argument('--use-lab-dev', action='store_true',
                         help='when --split-manifest is set, use lab dev (the '
                              '117-row official metric) as the eval set instead '

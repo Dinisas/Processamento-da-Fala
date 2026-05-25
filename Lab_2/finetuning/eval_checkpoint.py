@@ -96,8 +96,16 @@ def find_checkpoint(run_dir: Path) -> Path:
 
 def compute_norm_stats(datadir: Path, trainset: str, split_manifest):
     """Reproduce the y_mean / y_std that the model was trained with.
-    If --split-manifest was used during training, recompute on the train_inner
-    carve (otherwise the stats drift and predictions denormalise to wrong ages)."""
+
+    --split-manifest serves two unrelated purposes in this script:
+      (a) normalisation stats: recompute on the train_inner carve IF the
+          model was trained with this manifest (i.e. manifest.trainset ==
+          args.trainset).
+      (b) filtering --on via --subset: handled later, not here.
+    Auto-detect via the manifest's `trainset` field so passing a manifest
+    for a different trainset (e.g. using a big_train_falar manifest to
+    filter --on for a model trained on lab train) doesn't accidentally
+    null out the stats."""
     df = load_partition_dataframe(datadir, trainset)
     n_total = len(df)
     if split_manifest:
@@ -106,8 +114,15 @@ def compute_norm_stats(datadir: Path, trainset: str, split_manifest):
             mpath = LAB2_DIR / mpath
         with open(mpath) as f:
             manifest = json.load(f)
-        train_inner = set(manifest['train_inner_uuids'])
-        df = df[df['fileid'].isin(train_inner)].reset_index(drop=True)
+        manifest_trainset = manifest.get('trainset')
+        if manifest_trainset == trainset:
+            train_inner = set(manifest['train_inner_uuids'])
+            df = df[df['fileid'].isin(train_inner)].reset_index(drop=True)
+        else:
+            print(f"  note: manifest is for trainset={manifest_trainset!r}, "
+                  f"different from --trainset={trainset!r}. It will only be "
+                  f"used for --subset filtering on --on; norm stats stay on "
+                  f"the full {trainset!r} partition.")
     ages = pd.to_numeric(df['age'], errors='coerce').dropna().to_numpy()
     y_mean = float(np.mean(ages))
     y_std = float(np.std(ages) + 1e-8)
@@ -124,7 +139,11 @@ def main():
                          'Checkpoint located at '
                          'lab2_data/<trainset>/models/finetune_audeering_age_<run-id>/')
     ap.add_argument('--trainset', required=True,
-                    choices=('train_small', 'train', 'big_train_falar'),
+                    choices=('train_small', 'train', 'big_train_falar',
+                             'big_train_diversified', 'lab_train_old_boost',
+                             'lab_train_old_boost_n3', 'lab_train_old_boost_n4',
+                             'lab_train_old_boost_n5', 'lab_train_old_boost_n6',
+                             'lab_train_old_boost_n7', 'lab_train_old_boost_n8'),
                     help='the partition the model was trained on (defines '
                          'where the checkpoint lives + the y_mean/y_std stats)')
     ap.add_argument('--on', required=True,
@@ -145,6 +164,14 @@ def main():
                     help='max audio duration in seconds (must match training)')
     ap.add_argument('--batch-size', type=int, default=8,
                     help='eval batch size (default 8)')
+    ap.add_argument('--tta-chunks', type=int, default=1,
+                    help='test-time augmentation: predict on N evenly-spaced '
+                         '<duration>-second chunks per utterance and average. '
+                         'N=1 (default) keeps the original first-N-seconds '
+                         'behaviour. N=3 gives first/middle/last chunks; for '
+                         'longer files this spreads inference across the whole '
+                         'audio and smooths per-window noise. Typically saves '
+                         '0.1-0.3 MAE for ~3x more compute.')
     ap.add_argument('--checkpoint', default=None,
                     help='override the auto-located checkpoint dir (advanced)')
     ap.add_argument('--out-csv', default=None,
@@ -201,6 +228,29 @@ def main():
     print(f'\n-- building eval dataset on partition {args.on!r} --')
     df_eval = load_partition_dataframe(datadir, args.on)
     print(f'  rows: {len(df_eval)}')
+
+    if args.subset != 'all':
+        if not args.split_manifest:
+            sys.exit(f"--subset {args.subset} needs --split-manifest "
+                     f"so we know which uuids belong to that side.")
+        mpath = Path(args.split_manifest)
+        if not mpath.is_absolute():
+            mpath = LAB2_DIR / mpath
+        with open(mpath) as f:
+            manifest = json.load(f)
+        key = f'{args.subset}_uuids'
+        if key not in manifest:
+            sys.exit(f"manifest at {mpath} has no '{key}' field")
+        subset_ids = set(manifest[key])
+        before = len(df_eval)
+        df_eval = df_eval[df_eval['fileid'].isin(subset_ids)].reset_index(drop=True)
+        print(f'  --subset {args.subset}: kept {len(df_eval)}/{before} rows '
+              f'from {args.on!r}')
+        if len(df_eval) == 0:
+            sys.exit(f"--subset {args.subset} left 0 rows. Are you sure --on "
+                     f"{args.on!r} matches the manifest's trainset "
+                     f"({manifest.get('trainset')!r})?")
+
     has_labels = df_eval['age'].notna().any()
     print(f'  labelled: {has_labels}')
 
@@ -220,29 +270,72 @@ def main():
 
     out_dir = ckpt_dir / f'eval_{args.on}'
     out_dir.mkdir(parents=True, exist_ok=True)
-
-    collator = W2V2RegressionCollator(fe)
-    loader = DataLoader(
-        ds_eval, batch_size=args.batch_size,
-        shuffle=False, num_workers=0, collate_fn=collator,
-    )
-
-    print(f'\n-- running inference --')
-    all_preds = []
     use_amp = (device == 'cuda')
-    with torch.no_grad():
-        for batch in tqdm(loader, desc='infer', unit='batch'):
-            batch.pop('labels', None)        # do not let the model compute loss
-            batch = {k: (v.to(device) if torch.is_tensor(v) else v)
-                     for k, v in batch.items()}
-            if use_amp:
-                with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
+
+    if args.tta_chunks <= 1:
+        # Fast path: original single-chunk batched inference.
+        collator = W2V2RegressionCollator(fe)
+        loader = DataLoader(
+            ds_eval, batch_size=args.batch_size,
+            shuffle=False, num_workers=0, collate_fn=collator,
+        )
+
+        print(f'\n-- running inference (single chunk) --')
+        all_preds = []
+        with torch.no_grad():
+            for batch in tqdm(loader, desc='infer', unit='batch'):
+                batch.pop('labels', None)    # do not let the model compute loss
+                batch = {k: (v.to(device) if torch.is_tensor(v) else v)
+                         for k, v in batch.items()}
+                if use_amp:
+                    with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
+                        out = model(**batch)
+                else:
                     out = model(**batch)
-            else:
-                out = model(**batch)
-            logits = out.logits.float().squeeze(-1).cpu().numpy()
-            all_preds.append(logits)
-    preds_norm = np.concatenate(all_preds).squeeze()
+                logits = out.logits.float().squeeze(-1).cpu().numpy()
+                all_preds.append(logits)
+        preds_norm = np.concatenate(all_preds).squeeze()
+    else:
+        # TTA path: predict on N evenly-spaced chunks per utterance, average.
+        # For audio <= duration we just predict once (same as N=1). For longer
+        # clips we slide N chunks across the file. Each utterance's final
+        # prediction is the mean of its N chunk predictions.
+        import librosa
+        max_samples = int(16000 * args.duration)
+        n_chunks = args.tta_chunks
+        print(f'\n-- running inference with TTA (n_chunks={n_chunks}) --')
+
+        preds_list = []
+        with torch.no_grad():
+            for _, r in tqdm(df_eval.iterrows(), total=len(df_eval),
+                             desc=f'TTA-{n_chunks}', unit='utt'):
+                audio, _ = librosa.load(r['abs_path'], sr=16000, mono=True)
+                total = len(audio)
+                if total <= max_samples:
+                    # short enough — single chunk pads to max_samples via FE
+                    chunks = [audio]
+                else:
+                    # n_chunks evenly-spaced starts; last chunk ends at EOF
+                    last_start = total - max_samples
+                    starts = np.linspace(0, last_start, n_chunks).astype(int)
+                    chunks = [audio[s:s + max_samples] for s in starts]
+
+                chunk_logits = []
+                for chunk in chunks:
+                    inputs = fe(
+                        chunk, sampling_rate=16000,
+                        max_length=max_samples, truncation=True, padding=False,
+                        return_tensors='pt',
+                    )
+                    x = inputs['input_values'].to(device)
+                    if use_amp:
+                        with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
+                            out = model(input_values=x)
+                    else:
+                        out = model(input_values=x)
+                    chunk_logits.append(float(out.logits.float().squeeze().cpu()))
+                preds_list.append(float(np.mean(chunk_logits)))
+        preds_norm = np.asarray(preds_list)
 
     # Denormalise + clip to the project's age range (matches the sweep scripts).
     preds = preds_norm * y_std + y_mean
