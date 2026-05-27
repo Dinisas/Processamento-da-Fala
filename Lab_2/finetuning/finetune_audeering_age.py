@@ -1,43 +1,4 @@
-#!/usr/bin/env python3
-"""
-Backbone fine-tuning of audeering/wav2vec2-large-robust-24-ft-age-gender
-for age regression on our Portuguese lab data.
-
-This is purposely a SMALL, CHEAP experiment designed to answer one question:
-  "Does unfreezing the transformer give a real dev-MAE improvement on this
-   dataset, or does it just memorise train_small?"
-
-Approach (the same script scales up on a rented GPU):
-
-  - Load `Wav2Vec2ForSequenceClassification` initialised from audeering's
-    wav2vec2 backbone weights, with a fresh regression head (single scalar
-    output). Audeering's age/gender heads are reported as unexpected keys
-    and dropped during loading — they are never used, satisfying the
-    "no audeering classifier" constraint.
-  - `freeze_feature_encoder()` keeps the CNN frozen (the standard recipe);
-    the 24 transformer layers + the new regression head are trainable.
-  - HF `Trainer`, custom MSE loss, dev-MAE early-model-selection, linear
-    LR schedule with 10% warm-up.
-
-Local defaults are sized for an M-series Mac on MPS with 16 GB RAM:
-  batch 2, gradient_accumulation 4 (effective 8), 3 epochs on train_small.
-  Expected runtime: ~30-90 min, ~$0.
-
-To scale on a rented GPU (A100 / A10G / 4090 / L4), override:
-  --trainset train --epochs 6 --batch-size 8 --grad-accum 2
-  ...this is roughly a $1-3 run.
-
-Outputs:
-  - dev MAE per epoch printed to stdout + saved to finetune_results.csv
-  - best-by-dev-MAE checkpoint at lab2_data/<trainset>/models/finetune_audeering_age/
-  - dev.pkl / evl.pkl in the existing sweep format
-  - g<group>_<trainset>_finetune_audeering_age.csv  (Kaggle submission)
-
-Usage:
-    python finetuning/finetune_audeering_age.py                 # local default
-    python finetuning/finetune_audeering_age.py --epochs 5
-    python finetuning/finetune_audeering_age.py --trainset train --epochs 6 --batch-size 8 --grad-accum 2
-"""
+"""End-to-end fine-tuning of audeering/wav2vec2-large-robust-24-ft-age-gender for age regression."""
 
 import argparse
 import copy
@@ -50,8 +11,6 @@ import sys
 import time
 from pathlib import Path
 
-# Allow MPS to fall back to CPU for any op without a Metal kernel
-# (wav2vec2 has a couple of these — GroupNorm in particular).
 os.environ.setdefault('PYTORCH_ENABLE_MPS_FALLBACK', '1')
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -84,12 +43,8 @@ from pf_tools import create_submission_file
 
 
 AUD_MODEL_ID = 'audeering/wav2vec2-large-robust-24-ft-age-gender'
-AGE_MIN, AGE_MAX = 20.0, 90.0    # post-prediction clip (matches sweep script)
+AGE_MIN, AGE_MAX = 20.0, 90.0
 
-
-# ---------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------
 
 def select_device_str():
     if torch.backends.mps.is_available():

@@ -1,50 +1,4 @@
-#!/usr/bin/env python3
-"""
-Augment lab train with extra FalAR utterances of speakers whose mean age
-is >= --age-min, to fix the 65+ under-prediction bias we measured in
-diagnose_4_91.py (slope = -0.37, |residual| up to 14 years for true age 75).
-
-Why this approach
-    The diagnostic showed bias is statistical regression-toward-mean
-    driven by data scarcity at the tails (FalAR train has only 63 unique
-    speakers in the 65-75 bucket, contributing ~190 utts of "old voice"
-    to lab train). We can't add new 65+ voices — FalAR doesn't have any
-    more — but each of those 63 speakers has ~684 utts on average in
-    the broader FalAR train pool. Pulling 20 utts/speaker = ~1,260 extra
-    rows of "what these voices sound like" gives the model more session
-    variation per voice (different recording days, vocal warmth, prosody),
-    so it can learn each old voice's age more confidently.
-
-How it works
-    1. Load _falar_train_index.csv (built by enumerate_falar_speakers.py).
-       Per-speaker mean age comes from averaging the speaker's per-utt
-       ages across all train_* shards.
-    2. Filter to speakers with mean_age >= --age-min. Default 60.
-    3. For each such speaker, sample --utts-per-speaker utterances at
-       random from their available pool (excluding bad-duration ones).
-    4. Hash lab train wavs (raw bytes MD5) so we can skip any FalAR row
-       whose audio matches something already in lab train. This keeps
-       the boost partition free of duplicates.
-    5. Fetch the chosen rows from their parquet shards via DuckDB
-       (column projection: only fetch ID + wav, not the unused columns).
-    6. Write each fetched wav to the new partition, plus copy lab train
-       wavs in so the partition is self-contained.
-    7. Build the combined info.csv (lab train rows + new boost rows) and
-       info_full.csv (with FalAR speaker_id for the new rows, NaN for
-       lab train rows whose speaker_id we don't have).
-
-Output
-    lab2_data/<partition>/
-        wav/                     # lab train wavs + N additional per speaker
-        info.csv                 # SLPdata-compatible: wav, gender, age
-        info_full.csv            # wav, gender, age, speaker_id, duration
-
-Usage
-    PS> $env:HF_TOKEN = "hf_..."
-    python finetuning/build_old_speaker_boost.py
-    python finetuning/build_old_speaker_boost.py --age-min 65 --utts-per-speaker 30
-    python finetuning/build_old_speaker_boost.py --copy-mode symlink   # save disk
-"""
+"""Augment lab train with extra FalAR utterances for speakers whose mean age >= --age-min."""
 
 import argparse
 import csv
@@ -60,22 +14,12 @@ import numpy as np
 import pandas as pd
 import soundfile as sf
 
-try:
-    sys.stdout.reconfigure(encoding='utf-8')
-except Exception:
-    pass
-
 SCRIPT_DIR = Path(__file__).resolve().parent
 LAB2_DIR = SCRIPT_DIR.parent
 DATA_DIR = LAB2_DIR / 'lab2_data'
 
 HF_RESOLVE_PREFIX = 'hf://datasets/inesc-id/FalAR/data/'
 
-
-# ---------------------------------------------------------------------
-# Audio helpers (re-used from build_train_falar.py — FalAR is uniformly
-# 16 kHz mono PCM_16 so the fast path returns bytes unchanged).
-# ---------------------------------------------------------------------
 
 def hash_bytes(path: Path) -> str:
     h = hashlib.md5()

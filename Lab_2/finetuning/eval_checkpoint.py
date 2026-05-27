@@ -1,35 +1,4 @@
-#!/usr/bin/env python3
-"""
-Load a saved fine-tuned audeering age checkpoint and run inference on ANY
-partition (lab dev, lab evl, falar_dev, ...).
-
-The point: you don't have to re-train just to change which dev set you score
-against. Train once -> infer many.
-
-Usage
-    # Last night's adversarial model, evaluated on the 117-row lab dev
-    # (this replaces the formal "Run A" experiment with a 5-minute inference):
-    python finetuning/eval_checkpoint.py \\
-        --run-id G_adv_falar_s42 --trainset big_train_falar \\
-        --split-manifest lab2_data/big_train_falar/falar_speaker_split.json \\
-        --on dev
-
-    # Same model on the 7,319-row diagnostic FalAR dev:
-    python finetuning/eval_checkpoint.py \\
-        --run-id G_adv_falar_s42 --trainset big_train_falar \\
-        --split-manifest lab2_data/big_train_falar/falar_speaker_split.json \\
-        --on falar_dev
-
-    # Old 4.91 baseline checkpoint, evaluated on lab evl for a submission CSV:
-    python finetuning/eval_checkpoint.py \\
-        --run-id B_lr6e5_s42 --trainset train \\
-        --on evl
-
-Outputs
-    - dev.pkl (or <on>.pkl) under  <checkpoint>/eval_<on>/
-    - submission CSV at           Lab_2/g<group>_eval_<run-id>_on_<on>.csv
-    - MAE + RMSE printed to stdout (skipped on unlabelled partitions like evl)
-"""
+"""Inference for a saved audeering age checkpoint. Writes a submission CSV; supports TTA-N."""
 
 import argparse
 import csv
@@ -39,7 +8,6 @@ import pickle
 import sys
 from pathlib import Path
 
-# MPS fallback for any op without a Metal kernel.
 os.environ.setdefault('PYTORCH_ENABLE_MPS_FALLBACK', '1')
 os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
 
@@ -58,8 +26,6 @@ from transformers import (
     logging as tf_logging,
 )
 
-# Reuse helpers from the finetune script so the eval path is byte-for-byte
-# the same as training (same audio duration, same FE config, same collator).
 from finetune_audeering_age import (
     AUD_MODEL_ID,
     AGE_MIN,

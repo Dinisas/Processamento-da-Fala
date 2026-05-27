@@ -1,10 +1,10 @@
-"""Pick up from the checkpoint and finish Phases 3-5 fast.
+"""Continuation: ComParE RBF, GeMAPS CV grid, kernel ridge + gradient boosting, final ensemble."""
+import os, sys, time, pickle, warnings
+from pathlib import Path
 
-Skips slow linear SVR on ComParE_2016. For ComParE we only try the fast
-scaled-RBF path. CV grid runs on gemaps (current leader). Alt regressors
-on gemaps + egemaps. Final ensemble + dev/evl save.
-"""
-import os, time, pickle, warnings
+LAB2_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(LAB2_DIR))
+
 import numpy as np
 import opensmile
 from sklearn.svm import SVR, LinearSVR
@@ -19,7 +19,7 @@ from pf_tools import SLPdata, prepare_slp_data
 
 warnings.filterwarnings('ignore', category=UserWarning)
 
-DATADIR = os.path.abspath('lab2_data') + '/'
+DATADIR = str(LAB2_DIR / 'lab2_data') + os.sep
 TRAINSET = 'train_small'
 RNG = 35731
 CHECKPOINT = '/tmp/age_exp_checkpoint.pkl'

@@ -1,35 +1,4 @@
-#!/usr/bin/env python3
-"""
-Small hyperparameter sweep over audeering wav2vec2 age regression.
-
-Two sweep axes:
-  - SSL transformer LAYER to mean-pool: -1 (last) plus 20, 16, 12.
-    Different layers cache to separate dirs under
-      lab2_data/<part>/audeering_w2v2_layer<N>_pooled/  (or .._last_pooled).
-  - HEAD architecture / hyperparameters:
-      * 3 deterministic linear heads (Ridge x2, SVR-RBF)
-      * 3 MLP architectures, each trained with 3 SEEDS (variance estimate)
-
-Total = 48 (layer x head) runs. Targets ~10-15 min on the first run (the
-3 new-layer extractions dominate) and ~1-2 min on subsequent runs because
-features are cached per layer on disk via pf_tools.SLPdata.
-
-The script never touches audeering's age/gender classifier head: we load
-the checkpoint as a base `Wav2Vec2Model`, so HF's prefix-stripping silently
-drops the `age.*` / `gender.*` weights and only the wav2vec2 backbone
-weights are mapped.
-
-Outputs:
-  - Top-20 (layer, head) configs ranked by dev MAE.
-  - MLP results aggregated across seeds (mean / std / min per architecture).
-  - Top-3 submission CSVs (g<group>_sweep_L<layer>_<head>.csv).
-  - sweep_results.csv with every individual run for offline analysis.
-
-Usage:
-    python finetuning/run_audeering_age.py
-    python finetuning/run_audeering_age.py --trainset train     # full train, slow first run
-    python finetuning/run_audeering_age.py --duration 8         # shorter clips for speed
-"""
+"""Frozen-feature sweep over (transformer layer, head architecture, seed) for audeering/XLS-R-53 backbones."""
 
 import argparse
 import copy
@@ -41,7 +10,6 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-# MPS fallback for any op without a Metal kernel.
 os.environ.setdefault('PYTORCH_ENABLE_MPS_FALLBACK', '1')
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -69,16 +37,6 @@ from transformers import (
 
 from pf_tools import SLPdata, prepare_slp_data, create_submission_file
 
-
-# ---------------------------------------------------------------------
-# Backbone registry.
-#   - model_id     : HF hub id
-#   - model_class  : Wav2Vec2Model or WavLMModel
-#   - prefix       : SLPdata cache key prefix (separates caches across backbones)
-#   - layers       : default single-layer sweep set for that backbone
-#   - fusion_layers: default multi-layer fusion set for that backbone
-# Adding another backbone (HuBERT, MMS, XLS-R) is one entry here.
-# ---------------------------------------------------------------------
 
 BACKBONES = {
     'audeering': {

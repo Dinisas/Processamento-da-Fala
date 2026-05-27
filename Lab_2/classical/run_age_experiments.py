@@ -1,12 +1,10 @@
-"""Age-SVR improvement sweep.
+"""Classical openSMILE sweep: GeMAPS/eGeMAPS/ComParE functionals + SVR variants."""
+import os, sys, time, pickle, warnings
+from pathlib import Path
 
-Loads cached features (already on disk after the previous run), trains
-multiple model variants on each, runs a *small* CV grid on the best feature
-set, and saves dev+evl prediction pickles in the create_submission_file
-format. Intermediate results are pickled after each phase so a kill doesn't
-lose work.
-"""
-import os, time, pickle, warnings
+LAB2_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(LAB2_DIR))
+
 import numpy as np
 import opensmile
 from sklearn.svm import SVR
@@ -21,7 +19,7 @@ from pf_tools import SLPdata, prepare_slp_data
 
 warnings.filterwarnings('ignore', category=UserWarning)
 
-DATADIR = os.path.abspath('lab2_data') + '/'
+DATADIR = str(LAB2_DIR / 'lab2_data') + os.sep
 TRAINSET = 'train_small'
 RNG = 35731
 CHECKPOINT = '/tmp/age_exp_checkpoint.pkl'

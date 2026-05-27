@@ -1,40 +1,9 @@
-#!/usr/bin/env python3
-"""
-Create a sub-sampled old-boost partition from an existing one.
-
-Use case: we built lab_train_old_boost with 585 new utts (10/speaker)
-and discovered the training mean shifted too far (51.6 vs lab train's
-48.6 vs evl's 48.5) — the bias on evl_labeled flipped from -1 to +5.4.
-The partial run (257 utts) was the sweet spot.
-
-This script takes the existing lab_train_old_boost (~3,824 rows) and
-creates a new partition with N utts per old speaker (instead of up to 10),
-by sub-sampling deterministically per speaker. Hardlinks the wavs to
-avoid disk-duplicating the 3.2 GB of lab train copies. Result: a new
-partition you can fine-tune on in <1 hour, no new downloads.
-
-Usage
-    python finetuning/subsample_old_boost.py --utts-per-speaker 5
-        # writes lab2_data/lab_train_old_boost_n5/
-
-    python finetuning/subsample_old_boost.py --utts-per-speaker 7 \\
-        --out-name lab_train_old_boost_n7
-        # custom output partition name
-
-    python finetuning/subsample_old_boost.py --utts-per-speaker 5 --copy
-        # use copy instead of hardlink (slower, doubles disk)
-"""
+"""Sub-sample an old-boost partition to N utts per old speaker (hardlinks the wavs)."""
 
 import argparse
 import os
 import shutil
-import sys
 from pathlib import Path
-
-try:
-    sys.stdout.reconfigure(encoding='utf-8')
-except Exception:
-    pass
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 LAB2_DIR = SCRIPT_DIR.parent
@@ -42,10 +11,7 @@ DATA_DIR = LAB2_DIR / 'lab2_data'
 
 
 def main():
-    ap = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+    ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--src', default='lab_train_old_boost',
                     help='source partition with info_full.csv to sub-sample '
                          '(default lab_train_old_boost)')

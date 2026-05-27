@@ -1,46 +1,11 @@
-#!/usr/bin/env python3
-"""Average two or more submission CSVs into a single ensemble CSV.
-
-Each input CSV is the standard {fileId, Age} format produced by
-finetune_audeering_age.py or eval_checkpoint.py. We join on fileId and
-take the mean Age across all inputs. Missing fileids (present in some
-inputs but not others) are dropped with a warning unless --keep-partial
-is set, in which case rows present in any input are kept and averaged
-over whichever inputs contain them.
-
-Use cases
-    - K-fold ensemble: average the k per-fold evl prediction CSVs.
-    - Multi-seed ensemble: average the 4.91 seed runs (A_lr5e5_s7,
-      A_lr5e5_s13, ...).
-    - Cross-model ensemble: average the 4.91 model's evl predictions with
-      a different recipe's.
-
-Usage
-    python finetuning/average_predictions.py \\
-        --csv path/to/run1.csv path/to/run2.csv path/to/run3.csv \\
-        --out g07_ensemble.csv
-
-    # K-fold sweep:
-    python finetuning/average_predictions.py \\
-        --csv g07_eval_kfold_*_s42_on_evl_labeled.csv \\
-        --out g07_kfold_ensemble.csv
-"""
+"""Average two or more submission CSVs into one ensemble CSV (join on fileId, mean Age)."""
 
 import argparse
 import sys
-from pathlib import Path
-
-try:
-    sys.stdout.reconfigure(encoding='utf-8')
-except Exception:
-    pass
 
 
 def main():
-    ap = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+    ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--csv', nargs='+', required=True,
                     help='input submission CSVs to average (>= 2)')
     ap.add_argument('--out', required=True,
@@ -76,7 +41,6 @@ def main():
         dfs.append(df)
         print(f'  {path}: {len(df):>4d} rows, weight {w:.3f}')
 
-    # Outer join so we can detect missing fileids; we'll filter or warn later.
     merged = dfs[0].join(dfs[1:], how='outer')
 
     n_full = int(merged.notna().all(axis=1).sum())
@@ -89,11 +53,8 @@ def main():
             print(f'\n  dropping {n_partial} fileids not present in all inputs')
             merged = merged.dropna()
 
-    # Weighted average — for keep-partial rows we renormalise over the
-    # weights of inputs that actually have a value (treat NaN as missing).
     arr = merged.to_numpy()
     if args.keep_partial:
-        # broadcast weights across columns then mask
         w = np.tile(weights, (len(merged), 1))
         mask = ~np.isnan(arr)
         w = w * mask
