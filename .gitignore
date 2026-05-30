@@ -11,6 +11,10 @@ processamento_da_fala/
 __pycache__/
 *.pyc
 
-# Audio files (if you recorded locally)
-*.wav
-*.mp3
+# # Audio files (if you recorded locally)
+# *.wav
+# *.mp3
+
+# # Environment / secrets
+# .env
+# .env.*
