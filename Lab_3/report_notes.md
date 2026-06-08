@@ -122,11 +122,14 @@ More examples do not help and slightly hurt. Qwen2.5-7B is instruction-tuned —
 
 ### Task 4 — Scale to 500 examples (S3-CoT, Qwen2.5-7B)
 
-- **EM: 247/500 = 49.4%**
-- **F1: 0.456**
-- **TER: 203.92**
+| Model | EM | F1 | TER |
+|---|---|---|---|
+| **Qwen2.5-7B base** (S3-CoT) | **247/500 (49.4%)** | **0.456** | 203.92 |
+| CoQA-FT adapter (S3-CoT) | 208/500 (41.6%) | 0.412 | 98.04 |
 
-The TER is extremely high because CoT generates reasoning text before the answer (e.g. *"Let me think step by step... the answer is Nikkei"*) against 1–3 word references. TER counts every reasoning word as an insertion penalty. Zero-shot on the same 500 examples would give TER ≈ 76 — much better, at a small EM cost. **For this reason, EM and F1 are the primary accuracy metrics for TriviaQA. TER is not meaningful here.**
+The TER is extremely high for S3-CoT because chain-of-thought generates reasoning text before the answer (e.g. *"Let me think step by step... the answer is Nikkei"*) against 1–3 word references — TER counts every reasoning word as an insertion penalty. The CoQA-FT TER of 98 is lower because the fine-tuned model produces shorter, more direct outputs even on TriviaQA. **For this reason, EM and F1 are the primary accuracy metrics for TriviaQA. TER is not meaningful here.**
+
+**CoQA-FT drops EM by 7.8 percentage points (49.4% → 41.6%) on TriviaQA.** This confirms the hypothesis stated in section 4b: the adapter was trained to extract answers from a provided passage — on closed-book trivia where no passage exists, it is looking for context that isn't there, which hurts recall of memorised facts. The CoQA adapter should only be used for passage-grounded conversational QA.
 
 ### LLM-as-Judge experiment (`results_judge.json`)
 
@@ -349,8 +352,8 @@ CSM-1B produces completely unintelligible speech (100% round-trip WER) despite p
 **7. Context length degrades multi-turn CoQA performance — fine-tuning partially compensates.**
 Base model performance drops from ~73% EM on 11-turn stories to ~50% on 20-turn stories. The fine-tuned model closes this gap (all stories 67–75%) because shorter answers consume less history token budget, preserving earlier context. Managing context window usage is still a real engineering concern for production conversational systems.
 
-**8. QLoRA fine-tuning is practical and effective for domain adaptation.**
-One epoch, 154 MB adapter, ~1.5 hours on an RTX 5090. The result is a +9.2pp EM gain, +0.09 F1 gain, and −26 point TER improvement on CoQA validation. The adapter requires no changes to the base model and can be swapped in or out at inference time.
+**8. QLoRA fine-tuning is a double-edged sword: it helps in-domain and hurts out-of-domain.**
+One epoch, 154 MB adapter, ~1.5 hours on an RTX 5090. On CoQA (the training domain): +9.2pp EM, +0.09 F1, −26 TER. On TriviaQA (out-of-domain, closed-book): −7.8pp EM, −0.044 F1. The adapter learned to look for a passage that doesn't exist in TriviaQA, degrading factual recall. Fine-tuned adapters must be scoped to the tasks they were trained on.
 
 ---
 
@@ -416,6 +419,14 @@ clean_correct=246, wording_artifact=44, genuine_error=209, judge_slip=1
 ### DeepSeek fair re-test (from `results_deepseek_fair.json`)
 ```
 EM 2/20, F1 0.0745, max_new_tokens=512
+```
+
+### TriviaQA 500 — CoQA-FT vs base (from `predictions_trivia500_coqa_ft.json`)
+```
+CoQA-FT (S3-CoT): EM 208/500 (41.6%), F1 0.412, TER 98.04
+Base model (S3-CoT): EM 247/500 (49.4%), F1 0.456, TER 203.92
+Delta: EM -7.8pp, F1 -0.044, TER -105.88
+Note: lower TER for FT is misleading — shorter outputs, not better answers.
 ```
 
 ### CoQA multi-story — base vs fine-tuned (cell 85)
