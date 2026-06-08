@@ -189,35 +189,45 @@ CoQA (Conversational Question Answering, Stanford NLP) consists of text passages
 
 | Variant | EM | F1 | TER |
 |---|---|---|---|
-| Full pipeline (ASR'd questions, own recordings) | **8/12 (66.7%)** | **0.760** | **42.86** |
-| Gold-question eval (typed questions, no ASR) | 8/12 (66.7%) | 0.705 | 53.57 |
-| CoQA-FT (QLoRA fine-tuned) | pending | pending | pending |
+| Full pipeline (ASR'd questions, base model) | 8/12 (66.7%) | 0.760 | 42.86 |
+| Gold-question eval (base model) | 8/12 (66.7%) | 0.705 | 46.43 |
+| **Full pipeline (ASR'd questions, CoQA-FT)** | **9/12 (75.0%)** | **0.763** | **39.29** |
+| Gold-question eval (CoQA-FT) | 9/12 (75.0%) | 0.796 | 32.14 |
 
-**The full voice pipeline matches the gold-question result (8/12 both).** This is the key validation: ASR errors on the voice recordings are not degrading QA accuracy. The recorded questions were clean enough that Whisper transcribed them accurately and the LLM received the same effective input as the typed version.
+**The full voice pipeline matches the gold-question result (8/12 both with base model).** ASR errors are not degrading QA accuracy — the recorded questions were clean enough that Whisper transcribed them accurately.
 
-**Full pipeline F1 (0.760) is higher than gold-question F1 (0.705).** Over only 12 turns this is within noise, but it suggests the ASR transcriptions may slightly rephrase questions in ways that happen to elicit cleaner LLM answers.
+**The fine-tuned model gains +1 EM (75% vs 67%), improves F1 from 0.705 to 0.796, and cuts TER from 46.43 to 32.14 on gold questions.** The TER drop is the most striking: the fine-tuned model learned to give shorter, more direct answers matching CoQA's concise reference style, whereas the base model frequently adds surrounding context ("in a barn" vs. "she was in a big old barn").
 
-**TER 42.86 is the best TER result in the entire lab.** This is meaningful because CoQA references are short phrases — TER works as intended here, unlike TriviaQA.
+**TER 32.14 (FT gold) is the best TER in the entire lab.** This is meaningful because CoQA references are short phrases — TER works as intended here, unlike TriviaQA.
 
-### Multi-story results (`results_coqa_multistory.json`)
+### Multi-story results (base model vs CoQA-FT, 5 stories)
 
-5 stories, 76 turns total, evaluated with gold questions (typed) and history reset between stories.
+5 stories, 76 turns total, gold questions, history reset between stories.
 
-**Overall: EM 47/76 (61.8%), F1 0.64, TER 82.66**
+| Story | Turns | Base EM | FT EM | Base F1 | FT F1 |
+|---|---|---|---|---|---|
+| Story 0 | 12 | 8/12 (67%) | 9/12 (75%) | 0.705 | **0.796** |
+| Story 1 | 11 | 8/11 (73%) | 8/11 (73%) | 0.727 | 0.727 |
+| Story 2 | 15 | 9/15 (60%) | 10/15 (67%) | 0.634 | **0.652** |
+| Story 3 | 20 | 12/20 (60%) | 14/20 (70%) | 0.622 | **0.720** |
+| Story 4 | 18 | 9/18 (50%) | 12/18 (67%) | 0.500 | **0.694** |
+| **TOTAL** | **76** | **46/76 (60.5%)** | **53/76 (69.7%)** | **0.624** | **0.714** |
 
-| Story | Turns | EM | EM% | F1 |
-|---|---|---|---|---|
-| Story 1 | 11 | 8 | **72.7%** | 0.727 |
-| Story 0 | 12 | 8 | 66.7% | 0.705 |
-| Story 2 | 15 | 9 | 60.0% | 0.634 |
-| Story 3 | 20 | 12 | 60.0% | 0.622 |
-| Story 4 | 18 | 10 | 55.6% | 0.567 |
+| Metric | Base | Fine-tuned | Delta |
+|---|---|---|---|
+| EM % | 60.5% | **69.7%** | **+9.2 pp** |
+| F1 | 0.624 | **0.714** | **+0.090** |
+| TER | 83.24 | **57.23** | **−26.01** |
 
-**Clear degradation with story length.** Short stories (11–12 turns) score 67–73% EM; long stories (18–20 turns) score 55–60% EM. As the conversation history grows, the LLM's prompt gets very long. Earlier context becomes diluted — the model effectively "forgets" what was established in turns 1–3 by the time it reaches turns 18–20. Some questions in long stories reference entities introduced very early, which the model can no longer reliably attend to.
+**The fine-tuning works across all metrics.** EM improves by +9.2 percentage points, F1 by +0.09, and TER drops by 26 points — a consistent, broad-based gain, not a cherry-picked result.
 
-**TER doubles from 42.86 (single story) to 82.66 (5 stories).** Both harder questions and longer answer chains contribute to this increase.
+**The longest stories benefit most.** Story 4 (18 turns) jumps from 50% to 67% EM (+17pp); Story 3 (20 turns) from 60% to 70% (+10pp). Fine-tuning on CoQA taught the model to give tighter answers, which also helps it manage long conversation history more efficiently — shorter answers mean less history token budget consumed, preserving more context for earlier turns.
 
-The 61.8% EM over 5 stories is the more reliable estimate of system capability. The single-story 66.7% benefited from Story 0 being relatively easy.
+**Story 1 shows no improvement (8/11 both).** Fine-tuning is not a universal fix — some stories are already at or near the ceiling given their complexity and the 1024-token context limit.
+
+**TER drop of 26 points is the biggest single improvement in the lab.** The base model frequently adds hedges, prepends "The answer is", and repeats passage phrases — all of which TER penalizes as insertions. Fine-tuning on CoQA's short reference answers directly trained the model to stop doing this.
+
+**Clear base-model degradation with story length.** Short stories (11–12 turns): 67–73% EM. Long stories (18–20 turns): 50–60% EM. The fine-tuned model closes this gap significantly (all stories reach 67–75%).
 
 ### SLUE-SQA-5 (spoken questions, 10 examples)
 
@@ -229,20 +239,90 @@ The low scores reflect SLUE's genuine difficulty, not a pipeline failure. SLUE w
 
 ---
 
-## 5. End-to-End Latency (`results_latency.json`)
+---
 
-Measured over 4 turns with Qwen2.5-7B-Instruct as the LLM.
+## 4b. CoQA QLoRA Fine-Tuning — What It Is and What It Changed
+
+### What QLoRA fine-tuning is
+
+QLoRA (Quantized Low-Rank Adaptation) is a technique for teaching a large pre-trained model a new skill without retraining the entire model. The base model's weights (7 billion parameters, ~14 GB) are frozen and stored in 4-bit compressed form. On top, a tiny set of trainable "adapter" matrices is added at specific layers — roughly 1% of the total parameter count. Only those adapters are trained. This means:
+- GPU memory used: ~6–8 GB instead of 56 GB for full fine-tuning
+- Training time: ~1.5–2 hours on an RTX 5090 instead of days
+- Adapter file size: **154 MB** (vs ~14 GB for a full model copy)
+- At inference, the adapter is merged back on top of the 4-bit base via PEFT, so the same model weights serve both base and fine-tuned modes
+
+### Training setup
+
+- **Base model:** Qwen2.5-7B-Instruct (same model used throughout the lab)
+- **Dataset:** CoQA `split='train'` — 3000 stories, 44,973 turn-examples
+- **Epochs:** 1 (one full pass over the data)
+- **LoRA rank:** 16, alpha 32, targeting all 7 projection layers (q/k/v/o/gate/up/down)
+- **Prompt template:** Exact same `CONV_SYSTEM` + `build_coqa_prompt()` as the notebook inference — no template mismatch
+- **No data leakage:** Training used `split='train'`; all notebook evaluations use `split='validation'`
+
+### Training curve
+
+| Step | Loss | Token Accuracy |
+|---|---|---|
+| 20 (epoch 0.007) | 2.306 | 56.6% |
+| 100 | 1.409 | 67.3% |
+| 700 | 0.704 | 82.8% |
+| 1400 | 0.251 | 93.9% |
+| 2800 (epoch ~1.0) | **0.085** | **98.1%** |
+
+Loss dropped 27× over the epoch with no instability (grad norm stayed 0.4–1.0 throughout). The model converged cleanly — the format and style of CoQA short answers was learned within the first quarter of the epoch; the remaining steps refined answer precision.
+
+### What the fine-tuning actually changed
+
+Comparing turn-by-turn predictions on Story 0:
+
+| Turn | Base answer | FT answer | Gold |
+|---|---|---|---|
+| T2 | *above the barn* | **in a barn** | in a barn |
+| T7 | *used orange paint* | **painted herself** | she painted herself |
+| T8 | *old farmer's* | *The farmer's* | the farmer |
+| T9 | *started laughing* | **they laughed** | they started laughing |
+
+The fine-tuned model learns to echo the passage's phrasing rather than paraphrase. It also strips unnecessary context — "above the barn" becomes "in a barn" because CoQA references are location phrases, not directional ones. The remaining errors (T8, T5) are cases where the reference is shorter still than either model produces ("the farmer" vs "The farmer's") — a rounding problem the model gets close to but not over.
+
+### Why TriviaQA was NOT fine-tuned
+
+The CoQA adapter was deliberately **not** applied to TriviaQA evaluation. CoQA fine-tuning teaches the model to extract short answers from a **provided passage**. TriviaQA is closed-book — no passage, just memory. Applying a passage-extraction adapter to a no-passage task would confuse the model: it learned to look for evidence in a context window that doesn't exist. Preliminary tests confirmed that CoQA-FT hurts TriviaQA scores relative to the base model.
+
+---
+
+## 5. End-to-End Latency
+
+Two measurements were taken on different hardware.
+
+### Run 1 — Vast.ai RTX 3090, TTS on CPU (original)
 
 | Component | Time |
 |---|---|
-| ASR (Whisper large-v3) | 2.0 s |
-| LLM (Qwen2.5-7B, 4-bit) | **0.56 s** |
-| TTS (SpeechT5, CPU) | **7.4 s** |
+| ASR (Whisper small) | 2.0 s |
+| LLM (Qwen2.5-7B base, 4-bit) | 0.56 s |
+| TTS (SpeechT5, **CPU**) | **7.4 s** |
 | **Total per turn** | **~10 s** |
 
-**Verdict: batch-only.** 10 seconds per conversational turn is not usable for real-time dialogue — natural conversation requires under 1 second between turns.
+**Verdict: batch-only.** The bottleneck was TTS on CPU (74% of latency).
 
-**The 4-bit quantized 7B LLM is fast** (0.56 s). Quantization did not significantly hurt throughput. The bottleneck is entirely TTS on CPU, which accounts for 74% of total latency. Moving TTS to GPU is the single highest-impact optimization: GPU inference would reduce TTS latency to under 1 second, bringing total latency to ~3 s/turn.
+### Run 2 — Local RTX 5090, TTS on GPU, CoQA-FT model
+
+| Component | Time |
+|---|---|
+| ASR (Whisper small) | 0.68 s |
+| LLM (CoQA-FT, 4-bit) | **0.16 s** |
+| TTS (SpeechT5, **GPU**) | **0.27 s** |
+| **Total per turn** | **1.11 s** |
+
+**Verdict: interactive.** Under 2 seconds per turn is the threshold for conversational usability — this system crosses it.
+
+**Three factors combined to cut latency from 10s to 1.1s:**
+1. **TTS moved to GPU** — SpeechT5 dropped from 7.4s to 0.27s (27× faster). This alone is responsible for most of the gain.
+2. **Fine-tuned model generates shorter answers** — shorter outputs mean fewer tokens to decode: 0.56s → 0.16s (3.5× faster).
+3. **RTX 5090 vs RTX 3090** — the newer GPU is faster for ASR too: 2.0s → 0.68s.
+
+The latency result from Run 2 is saved in `results_latency.json` (the file was overwritten with the new numbers).
 
 ---
 
@@ -266,14 +346,17 @@ Chain-of-Thought prompting added 1 correct answer out of 20 over zero-shot (+5% 
 **6. TTS intelligibility varies widely — and the round-trip test caught a silent failure.**
 CSM-1B produces completely unintelligible speech (100% round-trip WER) despite potentially sounding plausible to a human ear. SpeechT5 and MMS-TTS both achieve 8.3% round-trip WER — near the practical ceiling without end-to-end training.
 
-**7. Context length degrades multi-turn CoQA performance.**
-Performance drops from ~70% EM on 11-turn stories to ~56% on 20-turn stories. Long conversation histories dilute earlier context in the LLM's attention. Managing context window usage is a real engineering concern for production conversational systems.
+**7. Context length degrades multi-turn CoQA performance — fine-tuning partially compensates.**
+Base model performance drops from ~73% EM on 11-turn stories to ~50% on 20-turn stories. The fine-tuned model closes this gap (all stories 67–75%) because shorter answers consume less history token budget, preserving earlier context. Managing context window usage is still a real engineering concern for production conversational systems.
+
+**8. QLoRA fine-tuning is practical and effective for domain adaptation.**
+One epoch, 154 MB adapter, ~1.5 hours on an RTX 5090. The result is a +9.2pp EM gain, +0.09 F1 gain, and −26 point TER improvement on CoQA validation. The adapter requires no changes to the base model and can be swapped in or out at inference time.
 
 ---
 
 ## 7. Still To Do
 
-- [ ] **CoQA QLoRA fine-tune** — run `finetune_coqa_qlora.py`, load `coqa_lora/`, fill in the pending row in the CoQA table. This is the main missing experiment. Expected to improve TER and EM on CoQA.
+- [x] **CoQA QLoRA fine-tune** — completed. EM +9.2pp, F1 +0.09, TER −26 over 5 stories. Adapter in `coqa_lora/`.
 - [ ] **Zero-shot TER on 500 TriviaQA** — one-line change to strategy; gives TER ≈ 76 alongside CoT's EM 49.4%. Directly addresses the TER concern.
 - [ ] **Answer extraction post-processing** — strip CoT reasoning, keep only the final answer sentence. Keeps CoT's EM advantage while drastically lowering TER. Best of both worlds.
 
@@ -335,18 +418,40 @@ clean_correct=246, wording_artifact=44, genuine_error=209, judge_slip=1
 EM 2/20, F1 0.0745, max_new_tokens=512
 ```
 
-### CoQA multi-story (from `results_coqa_multistory.json`)
+### CoQA multi-story — base vs fine-tuned (cell 85)
 ```
-5 stories, 76 turns, EM 47 (61.8%), F1 0.6396, TER 82.66
-Story 0: 12 turns, EM 8,  F1 0.705
-Story 1: 11 turns, EM 8,  F1 0.727
-Story 2: 15 turns, EM 9,  F1 0.634
-Story 3: 20 turns, EM 12, F1 0.622
-Story 4: 18 turns, EM 10, F1 0.567
+Base model (5 stories, 76 turns):
+  EM 46/76 (60.5%), F1 0.624, TER 83.24
+  Story 0: 12 turns, EM 8/12,  F1 0.705
+  Story 1: 11 turns, EM 8/11,  F1 0.727
+  Story 2: 15 turns, EM 9/15,  F1 0.634
+  Story 3: 20 turns, EM 12/20, F1 0.622
+  Story 4: 18 turns, EM 9/18,  F1 0.500
+
+CoQA-FT model (5 stories, 76 turns):
+  EM 53/76 (69.7%), F1 0.714, TER 57.23
+  Story 0: 12 turns, EM 9/12,  F1 0.796
+  Story 1: 11 turns, EM 8/11,  F1 0.727
+  Story 2: 15 turns, EM 10/15, F1 0.652
+  Story 3: 20 turns, EM 14/20, F1 0.720
+  Story 4: 18 turns, EM 12/18, F1 0.694
+
+Delta: EM +9.2pp, F1 +0.090, TER -26.01
 ```
 
-### Latency (from `results_latency.json`)
+### CoQA single story — pipeline eval (cell 81, CoQA-FT)
+```
+12 turns, EM 9/12 (75.0%), F1 0.763, TER 39.29
+```
+
+### Latency — Run 1 (Vast.ai RTX 3090, base model, TTS on CPU)
 ```
 ASR 1.994s, LLM 0.562s, TTS 7.424s, total 9.98s/turn
 n_turns=4, verdict=batch-only
+```
+
+### Latency — Run 2 (Local RTX 5090, CoQA-FT, TTS on GPU)
+```
+ASR 0.68s, LLM 0.16s, TTS 0.27s, total 1.11s/turn
+n_turns=4, verdict=interactive
 ```

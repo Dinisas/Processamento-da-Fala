@@ -1,9 +1,9 @@
 {
- "asr_s": 1.994,
- "llm_s": 0.562,
- "tts_s": 7.424,
- "total_s": 9.98,
+ "asr_s": 0.678,
+ "llm_s": 0.162,
+ "tts_s": 0.266,
+ "total_s": 1.106,
  "n_turns": 4,
- "llm": "Qwen2.5-7B-Instruct",
- "verdict": "batch-only"
+ "llm": "CoQA-FT",
+ "verdict": "interactive"
 }

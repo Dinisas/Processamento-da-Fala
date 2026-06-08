@@ -11,6 +11,9 @@ processamento_da_fala/
 __pycache__/
 *.pyc
 
+# LoRA adapter weights (large binary, train locally with finetune_coqa_qlora.py)
+Lab_3/coqa_lora/
+
 # # Audio files (if you recorded locally)
 # *.wav
 # *.mp3
