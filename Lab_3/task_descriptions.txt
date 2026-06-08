@@ -1,0 +1,94 @@
+=== FULL TASK DESCRIPTIONS ===
+
+
+============================================================
+[Cell 12] Intermediate Tasks - ASR Section
+============================================================
+## Intermediate tasks:
+
+* Collect two audio samples with your own voice, together with an English transcription of the spoken messages. The following [example shows how to record audio from your microphone within a Python notebook running on Google Colab](https://colab.research.google.com/gist/ricardodeazambuja/03ac98c31e87caf284f7b06286ebf7fd/microphone-to-numpy-array-from-your-browser-in-colab.ipynb#scrollTo=H4rxNhsEpr-c), but you can use any other method to collect the audio samples.
+* Use the Whisper ASR model to transcribe/translate the two spoken messages that were collected into English text. Notice that Whisper supports speech translation, and hence you can test the model with audio samples involving speech in different languages.
+* Use the transcriptions to compute the word error 
+... [truncated, total 1100 chars]
+
+============================================================
+[Cell 23] Task 1 - GPT-2 QA
+============================================================
+### Task 1 — GPT-2 Question Answering on TriviaQA
+
+GPT-2 is a pure language model with no instruction tuning — it cannot be told to "answer briefly". Instead we use a **few-shot prompt**: three example Q/A pairs are prepended to the question, guiding the model to continue in the same format (`Q: ... A: ...`). After generation we extract only the first line after the last `A:`, discarding any continuation.
+
+The TriviaQA dataset (`lucadiliello/triviaqa`) is loaded from HuggingFace and provides the questions and a list of valid answer strings per example. The cell below first inspects the dataset structure, then runs GPT-2 on the first 10 questions as a sanity check.
+
+============================================================
+[Cell 27] Task 2 - Multi-Model Comparison
+============================================================
+### Task 2 — Comparing Multiple Language Models on TriviaQA
+
+Now that GPT-2 provides a baseline, we compare it against a wider set of models on the same 20 TriviaQA questions:
+
+- **Local HuggingFace models** (SmolLM2-135M-Instruct, TinyLlama-1.1B-Chat, Qwen3.5-0.8B, DeepSeek-R1-Distill-1.5B) — instruction-tuned models loaded and run directly on the machine. A shared system prompt instructs each model to reply with a short phrase only.
+- **IAedu API models** (GPT-5.5 and Claude Opus 4.7) — large frontier models accessed via the IAedu platform's streaming API, using credentials stored in a local `.env` file (never committed to git).
+
+The final cell prints a side-by-side table with each model's prediction and an exact-match accuracy score at the bottom.
+
+============================================================
+[Cell 33] Task 3 - Strategies
+============================================================
+### Task 3 — Strategies for Improving Question Answering
+
+We test four strategies — individually and combined — to see which improves exact-match accuracy over the Task 2 baseline. All strategies are evaluated on the same 20 TriviaQA examples using Qwen3.5-0.8B (best local model) and both IAedu API models.
+
+| Strategy | What changes |
+|---|---|
+| **S1 — Zero-shot (baseline)** | Plain system prompt asking for a short answer |
+| **S2 — Three-shot** | Three solved examples from different domains added to anchor the format |
+| **S3 — Chain-of-thought** | Model is asked to reason step by step; final answer extracted after `Answer:` |
+| **S4 — RAG (Wikipedia)** | A Wikipedia summary is fetched per question and prepended as context |
+| **S2+S4 — One-shot + RAG** | Combines the example anchor with
+... [truncated, total 890 chars]
+
+============================================================
+[Cell 36] Task 4 - TER Evaluation
+============================================================
+### Task 4 — TER Evaluation on 500 TriviaQA Examples
+
+We pick the best (model, strategy) combination from Task 3 and scale up to the first 500 validation examples. The [TER metric](https://github.com/huggingface/evaluate/tree/main/metrics/ter) (Translation Edit Rate) measures the minimum number of edits — insertions, deletions, substitutions, and shifts — needed to convert the hypothesis into the reference, normalised by the reference length. A lower TER means a better match.
+
+Since calling the IAedu API for 500 examples would be slow and costly, we use the best **local** model/strategy identified in Task 3 for this bulk evaluation.
+
+============================================================
+[Cell 42] Intermediate Tasks - TTS Section
+============================================================
+## Intermediate tasks:
+
+* Connect the results from your answer to the previous intermediate task (i.e., conditioned language generation) to the SpeechT5 text-to-speech model, so as to produce speech outputs from the text generated by the model. You can also experiment with the use of other text-to-speech models (e.g., [Bark](https://huggingface.co/suno/bark-small), [CSM](https://huggingface.co/sesame/csm-1b), or [MMS-TTS](https://huggingface.co/facebook/mms-tts-eng)).
+* Produce naturally-sounding speech-based answers for the first 5 questions in the validation split from the QA dataset used in the previous exercise.
+* Connect also the results from your answer to the first intermediate task (i.e., automated speech recognition) to the SpeechT5 model and the LLM, so as to take spoken question
+... [truncated, total 1808 chars]
+
+============================================================
+[Cell 43] TTS Tasks 1 & 2
+============================================================
+### Tasks 1 & 2 — Connecting LLM Answers to Text-to-Speech
+
+**Task 1** loads four TTS models and defines a `synthesize_*()` function for each:
+
+| Model | Type | Sample rate |
+|---|---|---|
+| **SpeechT5** | Transformer encoder-decoder + HifiGan vocoder | 16 kHz |
+| **Bark-small** | Generative audio language model | 24 kHz |
+| **MMS-TTS** | Lightweight VITS model | ~22 kHz |
+| **CSM-1B** | Sesame conversational speech model | 16 kHz |
+
+**Task 2** passes the first 5 TriviaQA validation questions through Qwen3.5-0.8B and synthesizes each answer with all four models, so their voices and quality can be compared side-by-side.
+
+============================================================
+[Cell 46] TTS Task 3 - Pipeline
+============================================================
+Traceback (most recent call last):
+  File "<stdin>", line 30, in <module>
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 22: character maps to <undefined>

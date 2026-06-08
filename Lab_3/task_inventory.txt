@@ -1,0 +1,55 @@
+=== COMPREHENSIVE TASK INVENTORY ===
+
+
+[ASR (Section 1)] Intermediate Tasks - Audio Collection & ASR
+  Cell 12 (markdown)
+  Collect 2 audio samples with transcriptions; Adapt Whisper example
+  IMPLEMENTATION: Code follows (length: 58 chars), Executed: False
+
+[Question Answering (Section 2)] Task 1 - GPT-2 Question Answering on TriviaQA
+  Cell 23 (markdown)
+  Few-shot QA with GPT-2 on TriviaQA dataset
+  IMPLEMENTATION: Code follows (length: 384 chars), Executed: False
+
+[Question Answering (Section 2)] Task 2 - Comparing Multiple Language Models
+  Cell 27 (markdown)
+  Compare 7+ models on 20 TriviaQA questions
+  IMPLEMENTATION: Code follows (length: 2155 chars), Executed: False
+
+[Question Answering (Section 2)] Task 3 - Strategies for Improving QA
+  Cell 33 (markdown)
+  Test 4 strategies (RAG, CoT, Re-ranking, Ensemble) on 20 examples
+  IMPLEMENTATION: Code follows (length: 10313 chars), Executed: False
+
+[Question Answering (Section 2)] Task 4 - TER Evaluation on 500 Examples
+  Cell 36 (markdown)
+  Evaluate best model/strategy on 500 TriviaQA validation examples
+  IMPLEMENTATION: Code follows (length: 6707 chars), Executed: False
+
+[Text-to-Speech (Section 3)] Intermediate Tasks - Connect TTS & ASR-LLM-TTS Pipeline
+  Cell 42 (markdown)
+  Connect TTS to LLM outputs; Full ASR->LLM->TTS pipeline; SLUE-SQA-5 evaluation
+
+[Text-to-Speech (Section 3)] Tasks 1 & 2 (TTS) - Load TTS Models & Synthesize Answers
+  Cell 43 (markdown)
+  Load SpeechT5, Bark, MMS-TTS, CSM models; Synthesize answers for 5 TriviaQA questions
+  IMPLEMENTATION: Code follows (length: 260 chars), Executed: False
+
+[Text-to-Speech (Section 3)] Task 3 (TTS) - ASR + LLM + TTS Pipeline
+  Cell 46 (markdown)
+  Build spoken_qa() function chaining Whisper->LLM->TTS
+  IMPLEMENTATION: Code follows (length: 2067 chars), Executed: False
+
+[Text-to-Speech (Section 3)] Task 4 (TTS) - Evaluate on SLUE-SQA-5 with TER
+  Cell 48 (markdown)
+  Evaluate 10 SLUE-SQA-5 spoken questions using TER metric
+  IMPLEMENTATION: Code follows (length: 6256 chars), Executed: False
+
+[Text-to-Speech (Section 3)] Task 5 (TTS) - Record Own Voice & Process
+  Cell 50 (markdown)
+  Record yourself asking TriviaQA questions 1-2, process through pipeline
+  IMPLEMENTATION: Code follows (length: 1318 chars), Executed: False
+
+[Main Problem (Section 4)] Main Problem - Turn-based Spoken QA System
+  Cell 56 (markdown)
+  Build multi-turn conversational spoken QA system using CoQA dataset

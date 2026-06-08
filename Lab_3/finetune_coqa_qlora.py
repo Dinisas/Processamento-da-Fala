@@ -97,7 +97,7 @@ def main():
         bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True,
     )
     model = AutoModelForCausalLM.from_pretrained(
-        args.model_id, quantization_config=bnb, device_map="auto", torch_dtype=torch.bfloat16,
+        args.model_id, quantization_config=bnb, device_map="auto", dtype=torch.bfloat16,
     )
     model.config.use_cache = False
     model = prepare_model_for_kbit_training(model)
@@ -113,14 +113,13 @@ def main():
     print(f"Built {len(rows)} CoQA turn-examples from {args.max_stories or 'all'} stories.")
     ds = Dataset.from_list(rows)
 
-    def fmt(batch):
-        out = []
-        for s, u, a in zip(batch["system"], batch["user"], batch["assistant"]):
-            msgs = [{"role": "system", "content": s},
-                    {"role": "user", "content": u},
-                    {"role": "assistant", "content": a}]
-            out.append(tok.apply_chat_template(msgs, tokenize=False))
-        return out
+    def add_text(example):
+        msgs = [{"role": "system", "content": example["system"]},
+                {"role": "user",   "content": example["user"]},
+                {"role": "assistant", "content": example["assistant"]}]
+        return {"text": tok.apply_chat_template(msgs, tokenize=False)}
+
+    ds = ds.map(add_text)
 
     from trl import SFTConfig, SFTTrainer
     cfg = SFTConfig(
@@ -128,15 +127,16 @@ def main():
         gradient_accumulation_steps=args.grad_accum, num_train_epochs=args.epochs,
         learning_rate=args.lr, bf16=True, logging_steps=20, save_strategy="epoch",
         lr_scheduler_type="cosine", warmup_ratio=0.03, optim="paged_adamw_8bit",
-        max_seq_length=args.max_seq_len, packing=False, report_to="none",
+        max_seq_length=args.max_seq_len, packing=False, dataset_text_field="text",
+        report_to="none",
     )
     # processing_class (trl>=0.13) with a fallback to the older tokenizer= kwarg.
     try:
         trainer = SFTTrainer(model=model, args=cfg, train_dataset=ds,
-                             peft_config=lora, formatting_func=fmt, processing_class=tok)
+                             peft_config=lora, processing_class=tok)
     except TypeError:
         trainer = SFTTrainer(model=model, args=cfg, train_dataset=ds,
-                             peft_config=lora, formatting_func=fmt, tokenizer=tok)
+                             peft_config=lora, tokenizer=tok)
 
     trainer.train()
     trainer.save_model(args.out)     # saves the LoRA adapter

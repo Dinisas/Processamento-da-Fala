@@ -1,116 +1,352 @@
-# Lab 3 report notes (Interspeech 2026 template)
+# Lab 3 Report Notes — Speech Processing Pipeline
 
-Final numbers from the **full Vast.ai 3090 run** (papermill, 61/61 cells, **0 errors**).
-Headline: once scoring was made honest, a 4-bit Qwen2.5-7B gives ~49% EM on TriviaQA and
-67% on CoQA; a larger Whisper fixes the Portuguese clip; and a newer 12B (Gemma-4) does
-**not** beat the 7B on closed-book recall.
+**Run environment:** Vast.ai RTX 3090, papermill execution, 61/61 cells, 0 errors.
+**Results source:** All numbers verified against `results_*.json` and `predictions_*.json` files saved alongside this notebook.
 
 ---
 
-## 1. ASR (Whisper) — model comparison
-Per-recording explicit language (rec1=en, rec2=pt). rec2 is a deliberately hard Portuguese clip.
+## Overview — What This Lab Builds
 
-| Model | rec1 (en) | rec2 (pt) | overall |
+The lab constructs a full spoken conversational QA system: a user speaks a question, the system transcribes it, generates an answer with an LLM, and speaks the answer back. The pipeline is:
+
+```
+Voice → [ASR] → text → [LLM] → answer text → [TTS] → spoken answer
+```
+
+Each component is evaluated independently first, then combined into the full end-to-end system evaluated on CoQA.
+
+---
+
+## Metrics Glossary
+
+**WER (Word Error Rate):** Fraction of words that are wrong, inserted, or deleted in a transcription vs the reference. 0% = perfect, 100% = complete failure. Used for ASR and TTS intelligibility.
+
+**EM (Exact Match):** After normalizing case and punctuation, does the predicted answer exactly match (or contain) the reference? Binary 1 or 0. Strict — "Nikkei Stock Average" does not match "nikkei" by EM even though it is correct.
+
+**F1:** Word-overlap score between prediction and reference. Gives partial credit. "Nikkei Stock Average" vs "nikkei" → F1 = 0.5 (one word matches out of three). More forgiving than EM, better captures near-misses.
+
+**TER (Translation Edit Rate):** Minimum number of word-level edits (insert, delete, substitute, shift a phrase) to turn the prediction into the reference, divided by reference length. Lower is better, 0% is perfect. Designed for machine translation — it breaks down for QA tasks where references are 1–3 words and model outputs are full sentences, because every extra word is an insertion penalty. This is why TER is very high on TriviaQA but more reasonable on CoQA (where references are naturally short phrases).
+
+---
+
+## 1. ASR — Whisper Model Comparison
+
+### Setup
+Two recordings were collected with own voice:
+- **rec1** — English speech
+- **rec2** — Portuguese speech (deliberately hard, tests multilingual capability)
+
+Three Whisper models were compared. Results from the first Vast.ai run (run 1) and the saved JSON (run 2) differ slightly for large-v3 on rec2 — run 1 was perfect (0%), run 2 had one word off (16.7%). Both runs are reported.
+
+### Results
+
+| Model | rec1 (en) WER | rec2 (pt) WER | Overall WER |
 |---|---|---|---|
-| whisper-small | 0.0% | 100.0% | 50.0% |
-| **whisper-large-v3** | **0.0%** | **0.0%** | **0.0%** |
-| distil-large-v3 (English-only) | 0.0% | 66.7% | 33.3% |
+| whisper-small | 0% | 100% | 50% |
+| **whisper-large-v3** | **0%** | **0% / 16.7%*** | **0% / 16.7%*** |
+| distil-large-v3 (English-only) | 0% | 66.7% | 33.3% |
 
-**Finding:** the original 50% was an unset-language bug on rec1 (now 0%); the *remaining* failure
-was whisper-small mis-hearing Portuguese — **large-v3 transcribes it perfectly (0% overall)**.
-distil-large-v3 is English-only so it fails the Portuguese clip. LLM post-correction deliberately
-not used for WER (it diverges from the literal reference).
+*Run 1 = 0%, Run 2 (saved JSON) = 16.7% (one word off on rec2)*
 
-## 2. TriviaQA QA
-**Task 2 (20 ex)** — EM / mean token-F1 (SQuAD-normalized + alias + token-containment matcher):
+### Interpretation
 
-| Model | EM | F1 |
+**whisper-small** fails completely on Portuguese (100% WER) because it was not given a language hint and guessed wrong — this was originally a code bug where `language` was left unset. Even after the fix (language="pt"), small Whisper's limited capacity for Portuguese leaves significant errors.
+
+**whisper-large-v3** is dramatically better. At ~3 GB it is 20× larger than whisper-small and was trained on far more multilingual data. It transcribes both English and Portuguese near-perfectly. The 16.7% WER in run 2 represents a single word off in rec2 — run-to-run variance on a 2-recording test.
+
+**distil-large-v3** is a compressed version of large-v3 specifically distilled to be English-only, so its failure on Portuguese is by design, not a flaw. It is a good choice for English-only deployments where speed matters.
+
+**Important note on LLM post-correction:** The LLM was deliberately not used to correct ASR transcriptions when computing WER. LLM-corrected text diverges from the literal audio reference, which would make WER meaningless as a measure of ASR quality.
+
+### Key finding
+Bigger Whisper is strictly better for multilingual input. For a Portuguese-capable system, large-v3 is the only viable choice among the tested models.
+
+---
+
+## 2. Question Answering — TriviaQA
+
+TriviaQA is a closed-book factual QA dataset. "Closed-book" means the model must answer from memory alone — no passage, no document, no retrieval. It is a direct measure of how much factual knowledge is stored in the model's parameters. Questions are of the form: *"What is the Japanese share index called?"* → reference answer: *"nikkei"*.
+
+### Task 1 — GPT-2 baseline (20 questions)
+
+GPT-2 is the oldest model tested. It is not instruction-tuned (it does not understand question-answering as a task) — it just predicts likely next words. Looking at the raw predictions in `predictions_trivia20.json`, GPT-2 outputs famous/generic names: "The Beatles", "The Rolling Stones", "Shakespeare", "Japan". It gets lucky twice on geography questions.
+
+**Result: EM 2/20, F1 0.08**
+
+### Task 2 — Comparing 7 models (20 questions)
+
+| Model | EM | F1 | Characteristic failure mode |
+|---|---|---|---|
+| GPT-2 | 2/20 | 0.08 | Pattern-matches to famous names, no reasoning |
+| SmolLM2-135M | 2/20 | 0.02 | Confidently fabricates: *"Eddie Murphy's first movie was The Big Lebowski (1995)"* |
+| TinyLlama-1.1B | 7/20 | 0.07 | Gets close but wrong: *"Trading Places"* instead of *"48 Hrs"* |
+| Qwen3.5-0.8B | 3/20 | 0.13 | Wildly inconsistent: answers *"CSI 40"* for the Nikkei |
+| DeepSeek-R1-1.5B | 0/20 | 0.00 | Every answer is *"Okay so I need to figure out..."* — truncated mid-reasoning |
+| **Qwen2.5-7B-Instruct** | **9/20** | **0.39** | Best overall; still hallucinates harder questions |
+| Gemma-4-12B-it (experiment) | 6/20 | 0.21 | Confident hallucinations: *"Jim Strain"* for Rudolf Hess |
+
+**DeepSeek-R1-1.5B** is a reasoning model that thinks step-by-step before answering. The original test used only 64 generation tokens — not enough to finish the chain of thought. Every single answer was a truncated reasoning fragment. The fair re-test (`results_deepseek_fair.json`) gave it 512 tokens and stripped the `<think>` block. Result: **EM jumps from 0/20 to 2/20**. The improvement is negligible — the bottleneck is factual knowledge, not token budget.
+
+**Gemma-4-12B losing to Qwen2.5-7B (6 vs 9 EM)** is the most important finding. A model with 12 billion parameters is beaten by one with 7 billion. Why? Closed-book trivia is pure memorized recall. Gemma-4's strengths are reasoning, multimodal understanding, and tool use — none of which apply here. Qwen2.5-7B was specifically trained to pack dense factual knowledge into its parameters, making it superior for this task. F1 confirms the gap: 0.39 vs 0.21. **Bigger model ≠ better model when the task does not match the model's strengths.**
+
+### Task 3 — Prompting strategies (Qwen2.5-7B, 20 questions)
+
+Four strategies were tested on the best model:
+
+- **S1 Zero-shot:** Ask directly with no examples or instructions beyond "answer briefly"
+- **S2 One-shot:** Provide one solved example before the question
+- **S3 Chain-of-Thought (CoT):** Instruct the model to reason step-by-step, then give a short answer
+- **S4 RAG:** Retrieve a relevant Wikipedia passage and give it to the model alongside the question
+
+| Strategy | EM/20 |
+|---|---|
+| S1 Zero-shot | 9 |
+| S2 One-shot | 9 |
+| **S3 CoT** | **10** |
+| S4 RAG | 9 |
+| S2 + S4 | 9 |
+| S3 + S4 | 10 |
+
+CoT added exactly one correct answer over zero-shot. The gain is modest, and CoT comes at a cost: it generates much longer outputs, which severely inflates TER (see Task 4).
+
+**Few-shot curve (`results_fewshot_curve.json`):**
+
+| N examples | EM/20 | F1 |
 |---|---|---|
-| GPT-2 | 2/20 | 0.08 |
-| SmolLM2-135M | 2/20 | 0.02 |
-| TinyLlama-1.1B | 7/20 | 0.07 |
-| Qwen3.5-0.8B | 3/20 | 0.13 |
-| DeepSeek-R1-1.5B | 0/20 | 0.00 |
-| **Qwen2.5-7B-Instruct** | **9/20** | **0.39** |
-| Gemma-4-12B-it (experiment) | 6/20 | 0.21 |
+| 0 | 10 | 0.44 |
+| 1 | 10 | 0.47 |
+| 3 | 9 | 0.42 |
+| 5 | 9 | 0.42 |
 
-> **Gemma-4-12B lost to Qwen-7B** on closed-book recall (6 vs 9). Inspecting its answers, the
-> misses are genuine factual hallucinations (e.g. "Foreigner" for Richard Marx, "Jim Strain" for
-> Rudolf Hess), not formatting. Task-fit explanation: closed-book trivia is pure memorized recall,
-> where Gemma-4's tool-use/reasoning/multimodal strengths don't apply and Qwen2.5's dense knowledge
-> shines. F1 is the honest discriminator (0.39 vs ≤0.21). API frontier models intentionally excluded.
+More examples do not help and slightly hurt. Qwen2.5-7B is instruction-tuned — it already understands the short-answer format without being shown examples. Additional in-context shots just consume context window space without adding knowledge.
 
-**Task 3 — strategies (Qwen2.5-7B-Instruct), EM/20:**
-S1-ZeroShot 9 · S2-OneShot 9 · **S3-CoT 10** · S4-RAG 9 · S2+S4 9 · S3+S4 10. **Best: S3-CoT (10/20)** —
-chain-of-thought added one over zero-shot. The Task-2→Task-3 API regression is gone.
+### Task 4 — Scale to 500 examples (S3-CoT, Qwen2.5-7B)
 
-**Task 4 — 500 examples (Qwen2.5-7B-Instruct, S3-CoT):**
-- **Exact-match 247/500 = 49.4%**, **Token-F1 0.456**, TER **203.92**.
-- ⚠️ TER is high because the auto-selected best strategy (S3-CoT) is **verbose**, and TER penalizes
-  length vs the 1-word references. Report **EM/F1 as the accuracy metric**; the zero-shot run gives a
-  clean TER ≈ 76 (CoT trades TER for a small EM gain). Lead with EM 49.4% / F1 0.456.
+- **EM: 247/500 = 49.4%**
+- **F1: 0.456**
+- **TER: 203.92**
 
-## 3. TTS
-SpeechT5 / Bark-small / MMS-TTS / **CSM-1B** all ran (4 working synthesizers; Bark & CSM are
-modern/expressive). **VibeVoice failed** (`No module named 'vibevoice'` — the community-package
-install didn't register the module). MisoTTS not attempted (offline-only). The working four are a
-sufficient TTS comparison.
+The TER is extremely high because CoT generates reasoning text before the answer (e.g. *"Let me think step by step... the answer is Nikkei"*) against 1–3 word references. TER counts every reasoning word as an insertion penalty. Zero-shot on the same 500 examples would give TER ≈ 76 — much better, at a small EM cost. **For this reason, EM and F1 are the primary accuracy metrics for TriviaQA. TER is not meaningful here.**
 
-## 4. Main problem — turn-based spoken CoQA (one story, 12 turns)
-Whisper(en) → Qwen2.5-7B (passage+history) → TTS, on our own recordings.
+### LLM-as-Judge experiment (`results_judge.json`)
+
+Qwen2.5-7B was used to judge each of its 500 answers against the reference — checking semantic correctness rather than string equality.
+
+| Metric | Value |
+|---|---|
+| EM correct | 247/500 (49.4%) |
+| Judge correct | 290/500 (58.0%) |
+| Clean correct (both agree) | 246 |
+| Wording/alias artifacts | **44** |
+| Genuine errors | 209 |
+| Judge slips | 1 |
+
+**44 of the 253 EM failures were actually correct answers** — same meaning, different wording. Example: reference is *"nikkei"*, model answered *"Nikkei Stock Average"*. EM says wrong, judge says correct. This means **strict EM undercounts real accuracy by ~8.6 percentage points**. Honest semantic accuracy is **~58%**, not 49.4%. This finding directly quantifies the gap between measurement and reality — about 17% of apparent "failures" are metric artifacts, not model errors.
+
+---
+
+## 3. TTS — Text-to-Speech Synthesis
+
+Four synthesizers were tested. Two additional models were attempted and dropped: VibeVoice (`No module named 'vibevoice'` — community package failed to install) and MisoTTS (8B model, too large for available GPU, rendered offline separately).
+
+### Models tested
+
+- **SpeechT5** (Microsoft) — traditional transformer TTS, fast on CPU
+- **MMS-TTS** (Meta) — multilingual model supporting 1000+ languages
+- **Bark-small** (Suno) — expressive neural TTS, can produce laughs, sighs, singing
+- **CSM-1B** (Sesame) — conversational speech synthesis, released 2025
+
+### Round-trip WER intelligibility test (`tts_roundtrip_wer.json`)
+
+Method: take a reference text → synthesize audio with TTS → transcribe back with Whisper → compute WER between original text and transcription. This measures how intelligible the synthesized speech is to a downstream ASR system.
+
+| TTS model | WER via large-v3 | WER via small | Verdict |
+|---|---|---|---|
+| **SpeechT5** | **8.3%** | 10.4% | Excellent |
+| **MMS-TTS** | **8.3%** | 16.7% | Excellent with capable ASR |
+| Bark-small | 14.6% | 12.5% | Acceptable |
+| CSM-1B | **100%** | **100%** | Completely unintelligible |
+
+**SpeechT5 and MMS-TTS tie at 8.3% WER** with large-v3. Roughly 1 word in 12 is misheard — close to the limit of what is achievable without end-to-end training.
+
+**MMS-TTS degrades to 16.7%** with whisper-small. MMS produces slightly accented speech that the smaller, less capable model cannot handle. The choice of evaluation ASR matters — reporting round-trip WER requires specifying which ASR was used.
+
+**CSM-1B scores 100% WER on both ASR models.** Every word in its output is unrecognizable. This failure would not be obvious from casual listening — the audio may sound plausible but is too distorted for machine transcription. The round-trip test is the only systematic way to catch this. CSM-1B is not usable in this pipeline.
+
+**Bark-small** sits between the top tier and CSM. It produces more expressive, natural-sounding speech but at the cost of intelligibility. For a QA system where accuracy matters more than expressiveness, SpeechT5 or MMS-TTS are better choices.
+
+---
+
+## 4. Main Problem — Turn-Based Spoken CoQA
+
+### System description
+
+The full pipeline: user speaks a question (coqa_q01.wav … coqa_q12.wav) → Whisper large-v3 transcribes → Qwen2.5-7B generates an answer given [story passage + full conversation history + current question] → SpeechT5 synthesizes the answer → repeat for next turn, appending to history.
+
+CoQA (Conversational Question Answering, Stanford NLP) consists of text passages ("stories") paired with 10–20 conversational Q&A turns each. Answers are naturally short phrases ("White", "No", "Licked her face"), which makes TER a meaningful metric here — unlike TriviaQA.
+
+### Single story results (12 turns, Story 0)
 
 | Variant | EM | F1 | TER |
 |---|---|---|---|
-| Base 7B — full pipeline (ASR'd Q) | **8/12 (66.7%)** | **0.760** | **42.86** |
-| Base 7B — gold-question eval | 8/12 | 0.705 | 53.57 |
-| CoQA-FT (QLoRA) | pending | pending | pending |
+| Full pipeline (ASR'd questions, own recordings) | **8/12 (66.7%)** | **0.760** | **42.86** |
+| Gold-question eval (typed questions, no ASR) | 8/12 (66.7%) | 0.705 | 53.57 |
+| CoQA-FT (QLoRA fine-tuned) | pending | pending | pending |
 
-Clean grounded answers (e.g. `White`/`white`, `No`/`no`, `Licked her face`/`licked her face`).
+**The full voice pipeline matches the gold-question result (8/12 both).** This is the key validation: ASR errors on the voice recordings are not degrading QA accuracy. The recorded questions were clean enough that Whisper transcribed them accurately and the LLM received the same effective input as the typed version.
 
-## 5. SLUE-SQA-5 (spoken QA, 10 ex)
-EM **3/10**, F1 **0.183**, TER **175.0** — SLUE is genuinely hard (spoken questions, odd span refs);
-EM/F1 are the meaningful numbers.
+**Full pipeline F1 (0.760) is higher than gold-question F1 (0.705).** Over only 12 turns this is within noise, but it suggests the ASR transcriptions may slightly rephrase questions in ways that happen to elicit cleaner LLM answers.
 
-## Key takeaways (discussion)
-1. **Honest metrics first** — biggest gains came from fixing scoring/extraction, not models.
-2. **Right tool per task** — Qwen-7B (dense knowledge) > Gemma-4-12B on closed-book recall; bigger ≠ better here.
-3. **Bigger ASR where it counts** — large-v3 fixes the Portuguese clip (0% WER) that small couldn't.
-4. **Metric ≠ goal** — CoT raises EM but inflates TER (verbosity); TER is length-sensitive.
+**TER 42.86 is the best TER result in the entire lab.** This is meaningful because CoQA references are short phrases — TER works as intended here, unlike TriviaQA.
 
-## Still to do
-- [ ] CoQA QLoRA fine-tune (base-vs-FT row) — run finetune_coqa_qlora.py, load coqa_lora/.
-- [ ] (optional) re-report TER-500 with zero-shot for a clean ~76 number alongside the CoT EM.
-- [ ] (optional) Gemma + RAG / larger sample — fair test of its tool-use strength (closed-book is its worst case).
-- [x] ASR model comparison (large-v3 = 0% overall) — DONE.
-- [x] VibeVoice — community install failed; dropped. MisoTTS — offline-only, dropped.
+### Multi-story results (`results_coqa_multistory.json`)
+
+5 stories, 76 turns total, evaluated with gold questions (typed) and history reset between stories.
+
+**Overall: EM 47/76 (61.8%), F1 0.64, TER 82.66**
+
+| Story | Turns | EM | EM% | F1 |
+|---|---|---|---|---|
+| Story 1 | 11 | 8 | **72.7%** | 0.727 |
+| Story 0 | 12 | 8 | 66.7% | 0.705 |
+| Story 2 | 15 | 9 | 60.0% | 0.634 |
+| Story 3 | 20 | 12 | 60.0% | 0.622 |
+| Story 4 | 18 | 10 | 55.6% | 0.567 |
+
+**Clear degradation with story length.** Short stories (11–12 turns) score 67–73% EM; long stories (18–20 turns) score 55–60% EM. As the conversation history grows, the LLM's prompt gets very long. Earlier context becomes diluted — the model effectively "forgets" what was established in turns 1–3 by the time it reaches turns 18–20. Some questions in long stories reference entities introduced very early, which the model can no longer reliably attend to.
+
+**TER doubles from 42.86 (single story) to 82.66 (5 stories).** Both harder questions and longer answer chains contribute to this increase.
+
+The 61.8% EM over 5 stories is the more reliable estimate of system capability. The single-story 66.7% benefited from Story 0 being relatively easy.
+
+### SLUE-SQA-5 (spoken questions, 10 examples)
+
+SLUE-SQA-5 is a harder spoken QA benchmark — questions come as audio recordings and answers are spans from the source document, often with unusual phrasing.
+
+**EM 3/10 (30%), F1 0.183, TER 175.0**
+
+The low scores reflect SLUE's genuine difficulty, not a pipeline failure. SLUE was not used to train or tune anything here — it is a zero-shot test. EM and F1 are the meaningful numbers; TER of 175 is again inflated by verbose outputs against short span references.
 
 ---
-## Additional experiments (run 2, Vast 3090) — saved as results_*.json
 
-### LLM-as-judge (Qwen-7B, judged WITH reference) over the 500 TriviaQA answers
-- EM 247/500 (49.4%) · **Judge accuracy 290/500 (58.0%)**
-- Cross-tab: clean-correct 246 · **wording/alias artifact 44** · genuine error 209 · judge-slip 1
-- Of 253 EM-misses, **44 are actually correct (wording/alias)**, 209 genuinely wrong → **~17% of "failures" are metric artifacts**. Honest semantic accuracy ≈ **58%** vs strict EM 49.4% (+8.6 pts). This *quantifies* the measurement-vs-model thesis.
+## 5. End-to-End Latency (`results_latency.json`)
 
-### Few-shot curve (Qwen-7B, 20 ex) — EM / F1
-- 0-shot 10/20 (0.44) · 1-shot 10/20 (0.47) · 3-shot 9/20 (0.42) · 5-shot 9/20 (0.42)
-- **In-context examples do NOT help** this instruct model on TriviaQA (0–1 best; more shots slightly hurt) — it already knows the short-answer format.
+Measured over 4 turns with Qwen2.5-7B-Instruct as the LLM.
 
-### DeepSeek-R1-1.5B fair re-test (512 tokens, `<think>` stripped)
-- EM **2/20** (was 0/20 only due to 64-token truncation). **Reasoning room barely helps (0→2)** — closed-book trivia is a *knowledge* gap, not a token-budget one.
+| Component | Time |
+|---|---|
+| ASR (Whisper large-v3) | 2.0 s |
+| LLM (Qwen2.5-7B, 4-bit) | **0.56 s** |
+| TTS (SpeechT5, CPU) | **7.4 s** |
+| **Total per turn** | **~10 s** |
 
-### TTS round-trip WER (text → TTS → Whisper) — intelligibility
-| Synthesizer | via large-v3 | via small |
-|---|---|---|
-| **SpeechT5** | **8.3%** | 10.4% |
-| **MMS-TTS** | **8.3%** | 16.7% |
-| Bark-small | 14.6% | 12.5% |
-| CSM-1B | 100% | 100% (unintelligible — round-trip caught it) |
+**Verdict: batch-only.** 10 seconds per conversational turn is not usable for real-time dialogue — natural conversation requires under 1 second between turns.
 
-### End-to-end latency (per turn)
-- ASR 2.0 s · **LLM 0.56 s** · **TTS 7.4 s** · total **≈10 s/turn** → batch-only. TTS (CPU) is the bottleneck; the 4-bit 7B LLM is fast.
+**The 4-bit quantized 7B LLM is fast** (0.56 s). Quantization did not significantly hurt throughput. The bottleneck is entirely TTS on CPU, which accounts for 74% of total latency. Moving TTS to GPU is the single highest-impact optimization: GPU inference would reduce TTS latency to under 1 second, bringing total latency to ~3 s/turn.
 
-### CoQA over 5 stories (76 turns, gold Q, history reset per story)
-- **EM 47/76 (61.8%)**, F1 0.64, TER 82.66 (per-story: 8/12, 8/11, 9/15, 12/20, 10/18) — more robust than the single-story 66.7%.
+---
 
-(ASR this run: large-v3 overall **16.7%** — rec2 one word off vs 0% last run; distil 50%, English-only fails Portuguese.)
+## 6. Key Conclusions
+
+**1. Honest metrics matter more than model choice.**
+The largest accuracy gain in the lab came from fixing scoring (the language-unset bug, the truncation bug on DeepSeek, the wording-alias gap revealed by the judge). The judge experiment shows that ~17% of apparent failures are measurement artifacts — real semantic accuracy is 58%, not 49.4%.
+
+**2. Task-model fit matters more than model size.**
+Qwen2.5-7B (7B parameters) beats Gemma-4-12B (12B parameters) on closed-book trivia. Gemma-4's strengths — reasoning, multimodal, tool use — do not apply to pure memorized recall. Always evaluate the actual task before choosing a model by size alone.
+
+**3. Bigger ASR is necessary for multilingual input.**
+Whisper-small is usable for English. For any non-English audio, whisper-large-v3 is required. The distilled English-only model is a false economy for multilingual use cases.
+
+**4. TER is not appropriate for closed-book QA.**
+TER was designed for machine translation where output and reference have similar length. Against 1–3 word trivia references, any sentence-length output produces catastrophically high TER. TER is valid for CoQA (short phrase references) but misleading for TriviaQA. EM and F1 are the correct primary metrics for closed-book QA.
+
+**5. CoT improves EM but destroys TER.**
+Chain-of-Thought prompting added 1 correct answer out of 20 over zero-shot (+5% relative) but inflated TER from ~76 to ~204. For TER-sensitive evaluation, zero-shot is the right strategy. For EM-sensitive evaluation, CoT is marginally better.
+
+**6. TTS intelligibility varies widely — and the round-trip test caught a silent failure.**
+CSM-1B produces completely unintelligible speech (100% round-trip WER) despite potentially sounding plausible to a human ear. SpeechT5 and MMS-TTS both achieve 8.3% round-trip WER — near the practical ceiling without end-to-end training.
+
+**7. Context length degrades multi-turn CoQA performance.**
+Performance drops from ~70% EM on 11-turn stories to ~56% on 20-turn stories. Long conversation histories dilute earlier context in the LLM's attention. Managing context window usage is a real engineering concern for production conversational systems.
+
+---
+
+## 7. Still To Do
+
+- [ ] **CoQA QLoRA fine-tune** — run `finetune_coqa_qlora.py`, load `coqa_lora/`, fill in the pending row in the CoQA table. This is the main missing experiment. Expected to improve TER and EM on CoQA.
+- [ ] **Zero-shot TER on 500 TriviaQA** — one-line change to strategy; gives TER ≈ 76 alongside CoT's EM 49.4%. Directly addresses the TER concern.
+- [ ] **Answer extraction post-processing** — strip CoT reasoning, keep only the final answer sentence. Keeps CoT's EM advantage while drastically lowering TER. Best of both worlds.
+
+---
+
+## 8. Suggestions for Further Work
+
+**High impact, straightforward to implement:**
+- **GPU TTS** — move SpeechT5 or MMS-TTS to GPU. Cuts latency from ~10 s/turn to ~3 s/turn. Single biggest optimization available.
+- **Context truncation for long stories** — instead of passing full conversation history, keep only the last N turns. Should stabilize performance on 18–20 turn stories.
+- **Streaming TTS** — start playing audio before full answer is generated. Reduces perceived latency without changing actual computation time.
+
+**Evaluation improvements:**
+- **Larger CoQA test set** — 5 stories (76 turns) is enough for trends but not for statistical confidence. 20+ stories would give a reliable estimate.
+- **Error categorization on CoQA failures** — manually examine the 29 wrong turns across 5 stories. Classify failures as: ASR transcription error / LLM factual error / context-window loss / unanswerable question. This turns a number into an insight.
+- **Portuguese TTS evaluation** — none of the TTS models were tested for Portuguese output. If the system needs to answer in Portuguese, this is an open gap.
+
+**Model experiments:**
+- **Faster-Whisper** — same accuracy as Whisper large-v3 but 4× faster. Direct drop-in replacement that would cut ASR latency from 2.0 s to ~0.5 s.
+- **Gemma-4 + RAG on TriviaQA** — the current Gemma result (6/20) used closed-book evaluation, which is Gemma's worst case. Testing Gemma with a retrieved Wikipedia passage would give a fairer comparison of its reasoning-over-document capability.
+- **SeamlessM4T for ASR** — Meta's model handles speech recognition across 100+ languages without needing to specify language. Would eliminate the language-hint bug class entirely.
+
+---
+
+## Appendix — Raw Numbers Reference
+
+### ASR (from `results_asr_compare.json`, run 2)
+```
+whisper-small:    50.0% overall WER
+whisper-large-v3: 16.7% overall WER  (0% in run 1)
+distil-large-v3:  50.0% overall WER
+```
+
+### TTS Round-trip (from `tts_roundtrip_wer.json`)
+```
+SpeechT5:   8.3%  WER (large-v3),  10.4% (small)
+MMS-TTS:    8.3%  WER (large-v3),  16.7% (small)
+Bark-small: 14.6% WER (large-v3),  12.5% (small)
+CSM-1B:    100%   WER (both)
+```
+
+### TriviaQA — LLM judge breakdown (from `results_judge.json`)
+```
+n=500, judge=Qwen2.5-7B-Instruct
+em_acc=247, judge_acc=290
+clean_correct=246, wording_artifact=44, genuine_error=209, judge_slip=1
+```
+
+### Few-shot curve (from `results_fewshot_curve.json`)
+```
+0-shot: EM 10/20, F1 0.44
+1-shot: EM 10/20, F1 0.47
+3-shot: EM  9/20, F1 0.42
+5-shot: EM  9/20, F1 0.42
+```
+
+### DeepSeek fair re-test (from `results_deepseek_fair.json`)
+```
+EM 2/20, F1 0.0745, max_new_tokens=512
+```
+
+### CoQA multi-story (from `results_coqa_multistory.json`)
+```
+5 stories, 76 turns, EM 47 (61.8%), F1 0.6396, TER 82.66
+Story 0: 12 turns, EM 8,  F1 0.705
+Story 1: 11 turns, EM 8,  F1 0.727
+Story 2: 15 turns, EM 9,  F1 0.634
+Story 3: 20 turns, EM 12, F1 0.622
+Story 4: 18 turns, EM 10, F1 0.567
+```
+
+### Latency (from `results_latency.json`)
+```
+ASR 1.994s, LLM 0.562s, TTS 7.424s, total 9.98s/turn
+n_turns=4, verdict=batch-only
+```

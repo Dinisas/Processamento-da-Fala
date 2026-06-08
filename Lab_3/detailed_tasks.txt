@@ -1,0 +1,64 @@
+=== DETAILED TASK STATUS ANALYSIS ===
+
+
+Section 1: Intermediate Tasks - ASR
+  Description: Collect audio samples; Adapt Whisper for ASR
+  Markdown (cell 12): 1100 chars
+
+Section 2: Task 1 - GPT-2 QA on TriviaQA
+  Description: Few-shot prompting with GPT-2
+  Markdown (cell 23): 672 chars
+    - Code cell 24: 384 chars, outputs: 0
+    - Code cell 25: 3250 chars, outputs: 0
+    - Code cell 26: 3690 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
+
+Section 2: Task 2 - Multi-Model Comparison
+  Description: Compare 7+ models on 20 TriviaQA examples
+  Markdown (cell 27): 760 chars
+    - Code cell 28: 2155 chars, outputs: 0
+    - Code cell 29: 4879 chars, outputs: 0
+    - Code cell 30: 2325 chars, outputs: 0
+    - Code cell 31: 2367 chars, outputs: 0
+    - Code cell 32: 4824 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
+
+Section 2: Task 3 - Strategies for QA
+  Description: Test 4 strategies on 20 examples
+  Markdown (cell 33): 890 chars
+    - Code cell 34: 10313 chars, outputs: 0
+    - Code cell 35: 3074 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
+
+Section 2: Task 4 - TER on 500 Examples
+  Description: Scale-up evaluation using TER metric
+  Markdown (cell 36): 640 chars
+    - Code cell 37: 6707 chars, outputs: 0
+    - Code cell 38: 3883 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
+
+Section 3: TTS Tasks 1 & 2
+  Description: Load TTS models and synthesize answers
+  Markdown (cell 43): 626 chars
+    - Code cell 44: 260 chars, outputs: 0
+    - Code cell 45: 7627 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
+
+Section 3: TTS Task 3 - Full Pipeline
+  Description: ASR + LLM + TTS pipeline
+  Markdown (cell 46): 467 chars
+    - Code cell 47: 2067 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
+
+Section 3: TTS Task 4 - SLUE-SQA-5
+  Description: Evaluate 10 SLUE-SQA-5 examples
+  Markdown (cell 48): 533 chars
+    - Code cell 49: 6256 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
+
+Section 3: TTS Task 5 - Own Voice
+  Description: Record and process own voice questions
+  Markdown (cell 50): 514 chars
+    - Code cell 51: 1318 chars, outputs: 0
+    - Code cell 52: 1319 chars, outputs: 0
+  STATUS: INCOMPLETE (code exists, not executed)
