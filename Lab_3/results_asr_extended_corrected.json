@@ -1,0 +1,17 @@
+{
+ "openai/whisper-small": {
+  "en": 0.0132,
+  "pt": 0.1923,
+  "all": 0.1039
+ },
+ "openai/whisper-large-v3": {
+  "en": 0.0,
+  "pt": 0.0,
+  "all": 0.0
+ },
+ "distil-whisper/distil-large-v3": {
+  "en": 0.0,
+  "pt": 1.1282,
+  "all": 0.5714
+ }
+}

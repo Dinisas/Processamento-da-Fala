@@ -1,0 +1,83 @@
+{
+ "openai/whisper-small": {
+  "en_as_labeled": 1.0405,
+  "en_shift+1": 0.0263,
+  "pt": 1.039,
+  "transcripts": {
+   "en_00": "The weather in Lisbon is warm today.",
+   "en_01": "She reads books every evening before bed.",
+   "en_02": "The museum opens at 9 in the morning.",
+   "en_03": "He bought a new laptop for his work.",
+   "en_04": "The flight to London departs at midnight.",
+   "en_05": "Can you pass me the salt please?",
+   "en_06": "The children are playing in the park.",
+   "en_07": "I love listening to music while I cook.",
+   "en_08": "The train arrives at the central station at Núvi.",
+   "en_09": "We enjoyed dinner by the river last night.",
+   "pt_00": "Quem é o fundador da Ford?",
+   "pt_01": "Ela gosta de passear pela praia ao puro do sol.",
+   "pt_02": "O mercado abre a zote da manhã.",
+   "pt_03": "Nós comemos país grillado, Almoço.",
+   "pt_04": "A criança brinca no jardim com os amigos.",
+   "pt_05": "Ele trabalha numa empresa e tecnologia em Lisboa.",
+   "pt_06": "O comboio parte desta ação central às 3 da tarde.",
+   "pt_07": "Eu adoro ouvir música enquanto cozinhem.",
+   "pt_08": "A professor explica a matéria com muita clareza.",
+   "pt_09": "E os visitaram-nos eu no fim de semana passado."
+  }
+ },
+ "openai/whisper-large-v3": {
+  "en_as_labeled": 1.0405,
+  "en_shift+1": 0.0132,
+  "pt": 1.039,
+  "transcripts": {
+   "en_00": "The weather in Lisbon is warm today.",
+   "en_01": "She reads books every evening before bed.",
+   "en_02": "The museum opens at 9 in the morning.",
+   "en_03": "He bought a new laptop for his work.",
+   "en_04": "The flight to London departs at midnight.",
+   "en_05": "Can you pass me the salt, please?",
+   "en_06": "The children are playing in the park.",
+   "en_07": "I love listening to music while I cook.",
+   "en_08": "The train arrives at the central station at noon.",
+   "en_09": "We enjoyed dinner by the river last night.",
+   "pt_00": "Quem é o fundador da Ford?",
+   "pt_01": "Ela gosta de passear pela praia ao pôr do sol.",
+   "pt_02": "O mercado abre às 8 da manhã.",
+   "pt_03": "Nós comemos peixe grelhado ao almoço.",
+   "pt_04": "A criança brinca no jardim com os amigos.",
+   "pt_05": "Ele trabalha numa empresa de tecnologia em Lisboa.",
+   "pt_06": "O comboio parte da estação central às três da tarde.",
+   "pt_07": "Eu adoro ouvir música enquanto cozinho.",
+   "pt_08": "A professora explica a matéria com muita clareza.",
+   "pt_09": "Eles visitaram o museu no fim de semana passado."
+  }
+ },
+ "distil-whisper/distil-large-v3": {
+  "en_as_labeled": 1.0405,
+  "en_shift+1": 0.0132,
+  "pt": 1.2078,
+  "transcripts": {
+   "en_00": "The weather in Lisbon is warm today.",
+   "en_01": "She reads books every evening before bed.",
+   "en_02": "The museum opens at 9 in the morning.",
+   "en_03": "He bought a new laptop for his work.",
+   "en_04": "The flight to London departs at midnight.",
+   "en_05": "Can you pass me the salt, please?",
+   "en_06": "The children are playing in the park.",
+   "en_07": "I love listening to music while I cook.",
+   "en_08": "The train arrives at the central station at noon.",
+   "en_09": "We enjoyed dinner by the river last night.",
+   "pt_00": "Who is the founder of Ford?",
+   "pt_01": "She likes to passia by the prairie at the port of the sun.",
+   "pt_02": "The market open at 8 of the morning.",
+   "pt_03": "We eat much grilled at the almoos.",
+   "pt_04": "The child is a green in the garden with the",
+   "pt_05": "He works in a company in a technology in Lisboa.",
+   "pt_06": "The convoy is part of the station central at 3.",
+   "pt_07": "I adore I hear music, when I cook.",
+   "pt_08": "The professor explains the matter with much clearness.",
+   "pt_09": "They visited a museum on the end of the same time."
+  }
+ }
+}

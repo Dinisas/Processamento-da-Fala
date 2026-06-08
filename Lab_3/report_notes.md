@@ -466,3 +466,28 @@ n_turns=4, verdict=batch-only
 ASR 0.68s, LLM 0.16s, TTS 0.27s, total 1.11s/turn
 n_turns=4, verdict=interactive
 ```
+
+---
+## Extended ASR evaluation — 20 own recordings (10 EN + 10 PT)
+
+**Data fix:** the recording set was misaligned with the reference list (English missing
+its first sentence, Portuguese missing its second), which made the raw eval report ~100%
+WER despite near-perfect transcription. After realigning `EN_SENTENCES`/`PT_SENTENCES` to
+the audio files and adding bilingual number normalization ("nine"≡"9", "oito"≡"8",
+"três"≡"3"), the true WER is:
+
+| Model | EN WER | PT WER | Overall |
+|---|---|---|---|
+| **openai/whisper-large-v3** | **0.0%** | **0.0%** | **0.0%** |
+| openai/whisper-small | 1.3% | 19.2% | 10.4% |
+| distil-whisper/distil-large-v3 | 0.0% | 112.8% | 57.1% |
+
+**Findings:**
+- **whisper-large-v3 is essentially perfect** on all 20 clips (0% WER, both languages).
+- **whisper-small** is strong on English (1.3%) but markedly weaker on accented European
+  Portuguese (19.2%) — a clean small-vs-large, EN-vs-PT contrast.
+- **distil-large-v3** is English-only: 0% on EN but ~113% on PT (it cannot transcribe
+  Portuguese), so it's unsuitable for the bilingual pipeline despite matching large-v3 on English.
+- Methodological note: the original ~100% WER was a label-alignment artifact, not an ASR
+  failure — the same "measurement vs model" theme as the QA scoring fixes. (Numbers verified
+  offline from saved transcripts; see results_asr_extended_corrected.json.)
