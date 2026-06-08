@@ -1,0 +1,18 @@
+{
+ "SpeechT5": {
+  "wer_large_v3": 0.0833,
+  "wer_small": 0.1042
+ },
+ "Bark-small": {
+  "wer_large_v3": 0.1458,
+  "wer_small": 0.125
+ },
+ "MMS-TTS": {
+  "wer_large_v3": 0.0833,
+  "wer_small": 0.1667
+ },
+ "CSM-1B": {
+  "wer_large_v3": 1.0,
+  "wer_small": 1.0
+ }
+}

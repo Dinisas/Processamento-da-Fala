@@ -1,0 +1,10 @@
+{
+ "judge": "Qwen2.5-7B-Instruct",
+ "n": 500,
+ "em_acc": 247,
+ "judge_acc": 290,
+ "clean_correct": 246,
+ "wording_artifact": 44,
+ "genuine_error": 209,
+ "judge_slip": 1
+}

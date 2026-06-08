@@ -1,0 +1,4684 @@
+[
+ {
+  "question": "Who had an 80s No 1 hit with Hold On To The Nights?",
+  "prediction": "Lionel Richie",
+  "references": [
+   "richard marx"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the Japanese share index called?",
+  "prediction": "Nikkei",
+  "references": [
+   "nikkei"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who had a 70s No 1 hit with Kiss You All Over?",
+  "prediction": "Brotherhood of Man",
+  "references": [
+   "exile"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Kagoshima international airport is in which country?",
+  "prediction": "Japan",
+  "references": [
+   "japan"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was Eddie Murphy's first movie?",
+  "prediction": "Coming to America",
+  "references": [
+   "48 hours"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which musician founded the Red Hot Peppers?",
+  "prediction": "John McLaughlin",
+  "references": [
+   "jelly roll morton"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Kim Carnes' nine weeks at No 1 with Bette Davis Eyes was interrupted for one week by which song?",
+  "prediction": "- The song that briefly interrupted Kim Carnes' nine-week run at No. 1 was \"Jive Talkin'\" by The",
+  "references": [
+   "stars on 45 medley"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which musical featured the song The Street Where You Live?",
+  "prediction": "My Fair Lady",
+  "references": [
+   "my fair lady"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was the last inmate of Spandau jail in Berlin?",
+  "prediction": "Hess died in Spandau Prison on August 17, 1987, which marked the end of its use as an exclusive prison for high-ranking Nazi",
+  "references": [
+   "rudolf hess"
+  ],
+  "em": 0,
+  "f1": 0.087
+ },
+ {
+  "question": "Which volcano in Tanzania is the highest mountain in Africa?",
+  "prediction": "Mount Kilimanjaro",
+  "references": [
+   "kilimanjaro"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Of which African country is Niamey the capital?",
+  "prediction": "Niger",
+  "references": [
+   "niger"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was the man behind The Chipmunks?",
+  "prediction": "David Seville",
+  "references": [
+   "david seville"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "The flag of Libya is a plain rectangle of which color?",
+  "prediction": "green",
+  "references": [
+   "green"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In Lewis Carroll's poem The Hunting of the Snark, what did the elusive, troublesome snark turn into to fool hunters?",
+  "prediction": "A Boojum",
+  "references": [
+   "boojum"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which US No 1 single came from Diana Ross's platinum album Diana?",
+  "prediction": "The album \"Diana\" was released in 1970 and was indeed a platinum seller. The singles from this album included \"Ain't No Woman (Like the One I've Got),\" \"Love Hangover,\" and \"Upside Down.\"",
+  "references": [
+   "upside down"
+  ],
+  "em": 1,
+  "f1": 0.1333
+ },
+ {
+  "question": "Rita Coolidge sang the title song for which Bond film?",
+  "prediction": "The Man with the Golden Gun",
+  "references": [
+   "octopussy"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Where in Canada is the Lion's Gate bridge?",
+  "prediction": "British Columbia",
+  "references": [
+   "vancouver",
+   "city of vancouver"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which highway was Revisited in a classic 60s album by Bob Dylan?",
+  "prediction": "Highway 61",
+  "references": [
+   "61"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Who had a 70s No 1 hit with Let's Do It Again?",
+  "prediction": "Bee Gees",
+  "references": [
+   "staple singers"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Where in England was actor Nigel Hawthorne born?",
+  "prediction": "Bexhill-on-Sea",
+  "references": [
+   "coventry"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What claimed the life of singer Kathleen Ferrier?",
+  "prediction": "Lung cancer",
+  "references": [
+   "cancer"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "What Michelle Pfeiffer movie got a boost from the Coolio song Gangsta's Paradise?",
+  "prediction": "Batman Forever",
+  "references": [
+   "dangerous minds"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which country is the Sky Train Rail bridge?",
+  "prediction": "Given the lack of specific details, I cannot pinpoint the exact country. However, if we consider the",
+  "references": [
+   "canada"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which sport could the Pacers take on the Pistons?",
+  "prediction": "Basketball",
+  "references": [
+   "basketball"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "\"According to Rudyard Kipling what were the \"\"two imposters\"\" to meet and treat the same day?\"",
+  "prediction": "East and West",
+  "references": [
+   "triumph and disaster"
+  ],
+  "em": 0,
+  "f1": 0.3333
+ },
+ {
+  "question": "What is Osbert Lancaster best known for producing?",
+  "prediction": "Comic strips",
+  "references": [
+   "cartoons"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Where did the Shinning Path terrorists operate?",
+  "prediction": "Peru",
+  "references": [
+   "peru",
+   "peruvian"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who had a Too Legit To Quit Tour?",
+  "prediction": "Multiple sources confirm that Too Legit To Quit performed live shows",
+  "references": [
+   "stanley kirk burrell",
+   "mc hammer"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was Walter Matthau's first movie?",
+  "prediction": "",
+  "references": [
+   "kentuckian"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Brandon Lee died during the making of which movie?",
+  "prediction": "The Crow",
+  "references": [
+   "crow"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Brit broke the land speed record in 1990 in Thrust 2?",
+  "prediction": "Richard Noble",
+  "references": [
+   "richard noble"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which state was Gene Vincent born?",
+  "prediction": "Washington",
+  "references": [
+   "virginia"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Lloyd Webber musical premiered in the US on 10th December 1993?",
+  "prediction": "Step 4: Confirm the information",
+  "references": [
+   "sunset boulevard"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Richard Daley was mayor of which city for 21 years?",
+  "prediction": "Chicago",
+  "references": [
+   "chicago"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Dave Gilmore and Roger Waters were in which rock group?",
+  "prediction": "Pink Floyd",
+  "references": [
+   "pink floyd",
+   "tea set"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which artist David was born in Bradford UK?",
+  "prediction": "Given this information, the most accurate and well-known answer is",
+  "references": [
+   "hockney",
+   "david hockney"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What mythological beast has the head of a man, the body of a lion, and the tail and feet of a dragon?",
+  "prediction": "Sphinx",
+  "references": [
+   "manticore"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was President Gerald Ford's middle name?",
+  "prediction": "Robert",
+  "references": [
+   "rudolph"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who first hosted Family Feud?",
+  "prediction": "Richard Dawson",
+  "references": [
+   "richard dawson"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who is featured on Puff Daddy's Can't Hold Me Down?",
+  "prediction": "Faith",
+  "references": [
+   "mase"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "\"Who was the target of the failed \"\"Bomb Plot\"\" of 1944?\"",
+  "prediction": "Given these points, the target of the failed \"Bomb Plot\" of",
+  "references": [
+   "hitler"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was the first US-born winner of golf's British Open?",
+  "prediction": "4. The next American to win was Harry Vardon, who won in 1",
+  "references": [
+   "walter hagen"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In music, who was Sweet and Innocent and Too Young?",
+  "prediction": "Unclear",
+  "references": [
+   "donny osmond"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Bandar Seri Begawan International airport is in which country?",
+  "prediction": "Brunei",
+  "references": [
+   "brunei darussalam",
+   "brunei"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the name of Terence and Shirley Conran's dress designer son?",
+  "prediction": "Tom Conran",
+  "references": [
+   "jasper"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who or what was Gentle Ben in the 60s TV series?",
+  "prediction": "Bull moose",
+  "references": [
+   "bear"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "River Phoenix died during the making of which movie?",
+  "prediction": "Guzmán",
+  "references": [
+   "dark blood"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "How old was Jimi Hendrix when he died?",
+  "prediction": "- Since he died in September, before his November birthday,",
+  "references": [
+   "27"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Otis Barton was a pioneer in exploring where?",
+  "prediction": "Mariana Trench",
+  "references": [
+   "undersea"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the profession of Paul Strand (1890 - 1976)?",
+  "prediction": "Photographer",
+  "references": [
+   "photographer"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Benina international airport is in which country?",
+  "prediction": "Libya",
+  "references": [
+   "libya"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which actress was voted Miss Greenwich Village in 1942?",
+  "prediction": "After researching, I find that the actress who won the title of Miss Greenwich Village in 1942 was Joan Blondell. She was a well-known American actress of the 1930s and 1940s, known for her roles",
+  "references": [
+   "lauren bacall",
+   "bacall"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In the Bible, who did the sun and moon stand still before?",
+  "prediction": "Given these steps, the sun and moon stood still for Joshua",
+  "references": [
+   "joshua"
+  ],
+  "em": 1,
+  "f1": 0.1818
+ },
+ {
+  "question": "Who was the youngest brother in the Beach Boys?",
+  "prediction": "From these details, it's clear that Michael Wilson is the youngest brother among those who were part of the Beach Boys",
+  "references": [
+   "carl wilson"
+  ],
+  "em": 0,
+  "f1": 0.0952
+ },
+ {
+  "question": "Who set fire to his guitar at the Monterey Pop festival in 19676?",
+  "prediction": "Jimi Hendrix",
+  "references": [
+   "jimi hendrix",
+   "hendrix"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was the Georgia Peach?",
+  "prediction": "",
+  "references": [
+   "georgia peach"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "On what date in 1969 did Neil Armstrong first set foot on the Moon?",
+  "prediction": "July 20",
+  "references": [
+   "july 20"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the last US state to reintroduce alcohol after prohibition?",
+  "prediction": "After researching the timeline of the 21st Amendment's ratification, it is clear that Mississippi was the last state to ratify the 21st Amendment on March",
+  "references": [
+   "utah"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "To the nearest two, how many tennis Grand Slam titles did Jimmy Connors win?",
+  "prediction": "Since 10 is already an even number and greater than",
+  "references": [
+   "10"
+  ],
+  "em": 1,
+  "f1": 0.2
+ },
+ {
+  "question": "In Greek mythology, who were Arges, Brontes and Steropes?",
+  "prediction": "Cyclopes",
+  "references": [
+   "cyclopes"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who had a 60s No 1 with Downtown?",
+  "prediction": "Flo and Eddie",
+  "references": [
+   "petula clark"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Della Street was whose secretary?",
+  "prediction": "Nick Charles",
+  "references": [
+   "perry mason"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was the defending champion when Martina Navratilova first won Wimbledon singles?",
+  "prediction": "Chris Evert",
+  "references": [
+   "virginia wade"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Nigel Hawthorne was Oscar nominated for The Madness of which King?",
+  "prediction": "Step 4: Verify that this film led to his Oscar nomination in the Best Actor in a Leading",
+  "references": [
+   "george"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Star Trek star directed Three Men and a Baby?",
+  "prediction": "Lewis Teague",
+  "references": [
+   "leonard nimoy"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who directed the classic 30s western Stagecoach?",
+  "prediction": "John Ford",
+  "references": [
+   "john ford"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which 90s sci fi series with James Belushi was based on Bruce Wagner's comic strip of the same name?",
+  "prediction": "The Adventures of Briscoe Zoo",
+  "references": [
+   "wild palms"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which sitcom star appeared on the big screening The Object of My Affection?",
+  "prediction": "Ted Danson",
+  "references": [
+   "jennifer aniston"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In the late 60s Owen Finlay MacLaren pioneered what useful item for parents of small chldren?",
+  "prediction": "Changing Pad",
+  "references": [
+   "baby buggy"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which movie was a biopic about the life of David Helfgott?",
+  "prediction": "Shine",
+  "references": [
+   "shine"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which female singer was born on exactly the same day as impressionist Rich Little?",
+  "prediction": "Barbra Streisand",
+  "references": [
+   "tina turner"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Melanie Molitor is the mom of which tennis world NO 1?",
+  "prediction": "Novak Djokovic",
+  "references": [
+   "hingis",
+   "swiss miss",
+   "martina hingis"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "How was the European Recovery Program in the 1940s more commonly known?",
+  "prediction": "Marshall Plan",
+  "references": [
+   "european recovery program",
+   "marshall plan"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What relation is Joey Richardson to Vanessa Redgrave?",
+  "prediction": "half-sibling",
+  "references": [
+   "daughter"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the name of the brothel in The Best Little Whorehouse in Texas?",
+  "prediction": "The Best Little Whorehouse",
+  "references": [
+   "chicken ranch"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which European city is the Belvederen Gallery?",
+  "prediction": "Vienna",
+  "references": [
+   "vienna"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who's home runs record did Mark McGwire break in the 1998 season?",
+  "prediction": "Given this information, Mark McGwire broke the single-season home run record previously held by Hank Aaron, who had hit 755 career home runs as of the end of the 1997 season. McGwire surpassed this mark by",
+  "references": [
+   "roger maris"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "How old was Woody Herman when he founded his own orchestra?",
+  "prediction": "22",
+  "references": [
+   "13"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The Naismith Award is presented in which sport?",
+  "prediction": "Basketball",
+  "references": [
+   "basketball"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which country was the first permanent bungee jumping site situated?",
+  "prediction": "New Zealand",
+  "references": [
+   "new zealand"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "\"In which movie did Garbo say, \"\"I want to be alone\"\".\"",
+  "prediction": "Queen Christina",
+  "references": [
+   "grand hotel"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which river is the Boulder Dam?",
+  "prediction": "Colorado River",
+  "references": [
+   "colorado"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Which journalist first told the world about the My Lai massacre?",
+  "prediction": "Seymour Hersh",
+  "references": [
+   "seymour hersh",
+   "sy hersh"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which legendary dancer was Oscar-nominated for The Towering Inferno?",
+  "prediction": "Step 4: Remember that the legendary dancer known for both her dancing and",
+  "references": [
+   "fred astaire"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Joan's career revived in Whatever Happened to Baby Jane?",
+  "prediction": "Joan Crawford",
+  "references": [
+   "crawford"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Which Oscar-nominated film had You Sexy Thing as its theme song?",
+  "prediction": "Midnight Express",
+  "references": [
+   "full monty"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the Paramount Film Company originally called?",
+  "prediction": "American Entertainments Company",
+  "references": [
+   "famous players film company",
+   "famous players"
+  ],
+  "em": 0,
+  "f1": 0.2857
+ },
+ {
+  "question": "Which country does the airline TAAG come from?",
+  "prediction": "Angola",
+  "references": [
+   "angola"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which US president won the Nobel Peace Prize in 1920?",
+  "prediction": "- Warren G. Harding (1921)",
+  "references": [
+   "woodrow wilson",
+   "president woodrow wilson"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Marc Dutroux hit the headlines over a 'house of horrors' in which country?",
+  "prediction": "Belgium",
+  "references": [
+   "belgian"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "On the Internet what is Spam?",
+  "prediction": "UnsolicitedMessages",
+  "references": [
+   "junk mail"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In baseball, where do the Orioles come from?",
+  "prediction": "Baltimore",
+  "references": [
+   "baltimore"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which film director guested as the FBI Director in The Silence of the Lambs?",
+  "prediction": "Scott Glenn, an actor, played the role of Jack Crawford in \"The Silence of the Lambs,\" and",
+  "references": [
+   "roger corman"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In baseball, where do the Royals come from?",
+  "prediction": "Kansas City",
+  "references": [
+   "kansas city"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was Pete Sampras seeded when he won his first US Open?",
+  "prediction": "- Pete Sam",
+  "references": [
+   "twelve",
+   "12"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which grand slam did Pete Sampras not win in the 20th century?",
+  "prediction": "3. **Wimbledon**: Sampras won this tournament",
+  "references": [
+   "french"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the largest city in Ohio?",
+  "prediction": "Columbus",
+  "references": [
+   "cleveland"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which year was the Juilliard School founded in New York?",
+  "prediction": "The Juilliard School was founded in 1905 when the Institute of Musical Art and the New York College of Music merged. However, the official opening of the",
+  "references": [
+   "1905"
+  ],
+  "em": 1,
+  "f1": 0.087
+ },
+ {
+  "question": "What had Edmond Hillary worked at before taking up mountain climbing?",
+  "prediction": "Beekeeper",
+  "references": [
+   "beekeeping"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Beloved in 1999 was whose first movie since The Color Purple in 1985?",
+  "prediction": "Oprah Winfrey",
+  "references": [
+   "oprah",
+   "oprah winfrey"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which sci fi classic did the space ship Nostromo first appear?",
+  "prediction": "Alien",
+  "references": [
+   "aliens",
+   "alien"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which country was Earl Spencer's acrimonious divorce settlement heard?",
+  "prediction": "England",
+  "references": [
+   "south african",
+   "south africa"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In Hanna and Barbera's TV cartoons base on The Addams Family who was the voice of Gomez?",
+  "prediction": "Maurice LaMarche",
+  "references": [
+   "john astin"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The Suez Canal connects the Mediterranean Sea to which other Sea?",
+  "prediction": "Red Sea",
+  "references": [
+   "red sea"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What color golf balls are used on the golf course in Antarctica?",
+  "prediction": "Given these considerations,",
+  "references": [
+   "orange"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "For which team did Babe Ruth blast his last Major League home run?",
+  "prediction": "New York Yankees",
+  "references": [
+   "boston braves"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which singer had a big 60s No 1 with Roses Are Red?",
+  "prediction": "Sandie Shaw",
+  "references": [
+   "bobby vinton"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is Harrison Ford's real name?",
+  "prediction": "Henry Ford II",
+  "references": [
+   "harrison ford"
+  ],
+  "em": 0,
+  "f1": 0.4
+ },
+ {
+  "question": "Which rock star did Cindy Crawford name her first son after?",
+  "prediction": "Richard Gere",
+  "references": [
+   "presley"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which country did the Internet start?",
+  "prediction": "United States",
+  "references": [
+   "america",
+   "united states"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which was the first European city this century to open an underground railway system?",
+  "prediction": "- Dublin opened the",
+  "references": [
+   "paris"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which much-loved actor won the Best Actor Oscar for The Philadelphia Story?",
+  "prediction": "James Stewart",
+  "references": [
+   "james stewart"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was the star of the film based on the record Harper Valley PTA by Jeannie C Riley?",
+  "prediction": "3. Consider related media: There might be a TV show, movie, or other media inspired by the song, but not directly based",
+  "references": [
+   "barbara eden"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who won baseball's first World Series of the 80s?",
+  "prediction": "Cincinnati Reds",
+  "references": [
+   "phillies"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "\"Which boxer famously said,\"\" If I can't beat this bum take my name off the record books?\"\"\"",
+  "prediction": "",
+  "references": [
+   "rocky marciano",
+   "brockton blockbuster",
+   "rocco marchegiano"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In what year was the first in-flight movie shown on an internal flight in the USA.",
+  "prediction": "4. The first in-flight movie is often cited as \"The Concorde Story\" shown on Pan Am's Concorde",
+  "references": [
+   "1929"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The Black Hills lie between which two rivers?",
+  "prediction": "Belle Fourche and Cheyenne Rivers",
+  "references": [
+   "belle fourche and cheyenne"
+  ],
+  "em": 1,
+  "f1": 0.8889
+ },
+ {
+  "question": "Who succeeded Brezhnev as Soviet premier?",
+  "prediction": "Andropov",
+  "references": [
+   "yuri andropov",
+   "andropov"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which events did Gert Fredriksson win six Olympic gold medals?",
+  "prediction": "- He won three gold medals each in the 500m and 1",
+  "references": [
+   "canoeing",
+   "canoeist"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Aung San Suu Kyi is a controversial leader in which country?",
+  "prediction": "Myanmar",
+  "references": [
+   "myanmar"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which actress wrote the novel The Last of the Really Great Whangdoodles?",
+  "prediction": "None",
+  "references": [
+   "julie andrews",
+   "julie andrews edwards"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Palestinian co-founded al Fatah in 1957?",
+  "prediction": "3. **Verification**: Historical records and biographical information confirm that Yasser Arafat was indeed one of the founders of al Fatah in 1",
+  "references": [
+   "yasser arafat"
+  ],
+  "em": 1,
+  "f1": 0.1739
+ },
+ {
+  "question": "Truax Field international airport is in which US state?",
+  "prediction": "Wisconsin",
+  "references": [
+   "wisconsin"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In La Cage Aux Folles, what was La Cage Aux Folles?",
+  "prediction": "The Bird Cage of F",
+  "references": [
+   "nightclub"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In what month was the attack on Pearl Harbor?",
+  "prediction": "December",
+  "references": [
+   "december"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which was the longest moon landing?",
+  "prediction": "6. Apollo 17: Stayed for nearly 75",
+  "references": [
+   "apollo 17"
+  ],
+  "em": 1,
+  "f1": 0.4444
+ },
+ {
+  "question": "Who wrote My Life and Loves in 1926, originally banned in the US?",
+  "prediction": "Ernest Hemingway",
+  "references": [
+   "frank harris"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "\"Who said, To err is human but it feels divine?\"\"\"",
+  "prediction": "Oscar Wilde",
+  "references": [
+   "mae west"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which future Hollywood star got her break as Wonder Girl, Wonder Woman's sister Drusilla?",
+  "prediction": "Kristen Wi",
+  "references": [
+   "debra winger"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was the first US president Barbara Walters interviewed?",
+  "prediction": "Barbara Walters is famously known for interviewing Ronald Reagan, who was President at the time she",
+  "references": [
+   "nixon",
+   "richard nixon"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was the first American to travel faster than the speed of sound?",
+  "prediction": "Chuck Yeager",
+  "references": [
+   "chuck yeager"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which caped crusader operated in Gotham City?",
+  "prediction": "Batman",
+  "references": [
+   "caped crusader",
+   "batman"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which orchestral conductor was married to one of the subjects of the film Hillary and Jackie?",
+  "prediction": "4. The most famous orchestral conductor associated with the Kennedy",
+  "references": [
+   "daniel barenboim"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The world was first aware of the Chernobyl disaster after detectors were triggered at a nuclear plant in which country?",
+  "prediction": "Sweden",
+  "references": [
+   "sweden"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the name of Michael Jackson's second wife?",
+  "prediction": "Lisa Marie Presley",
+  "references": [
+   "deborah rowe jackson",
+   "deborah rowe"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which city was John Lennon murdered?",
+  "prediction": "New York City",
+  "references": [
+   "new york"
+  ],
+  "em": 1,
+  "f1": 0.8
+ },
+ {
+  "question": "Which writer and politician became Lord Tweedsmuir?",
+  "prediction": "John Buchan",
+  "references": [
+   "sir john buchan",
+   "lord tweedsmuir",
+   "john buchan"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What word for unthinking patriotism is derived from the name of one of Napoleon's admirers?",
+  "prediction": "Step",
+  "references": [
+   "chauvinism"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who did Dr. Crippen murder?",
+  "prediction": "Ethel Nevin",
+  "references": [
+   "his wife"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "On which label did Chuck Berry record in the 1950s and 1960s?",
+  "prediction": "Chess Records",
+  "references": [
+   "chess"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Which state on the Gulf of Mexico is nearest the end of the alphabet?",
+  "prediction": "Among these, the letter \"",
+  "references": [
+   "texas"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Where was the American venue of the Live Aid concert?",
+  "prediction": "John F. Kennedy Stadium",
+  "references": [
+   "philadelphia"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "South Pacific was set during which war?",
+  "prediction": "World War II",
+  "references": [
+   "world war ii",
+   "wwii"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What kind of disaster claimed some 100,000 lives in Armenia in 1988?",
+  "prediction": "Earthquake",
+  "references": [
+   "earthquake"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the former name of the British Green Party?",
+  "prediction": "UK Green Party",
+  "references": [
+   "ecology party"
+  ],
+  "em": 0,
+  "f1": 0.4
+ },
+ {
+  "question": "In which battle did Harold II, the last Saxon king, lose his life?",
+  "prediction": "Battle of Hastings",
+  "references": [
+   "battle of hastings"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What name is given to the change of state from liquid to gas?",
+  "prediction": "Vaporization",
+  "references": [
+   "evaporate"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who first drew Mickey Mouse when ?Disney first supplied the voice?",
+  "prediction": "2. **Who voiced Mickey Mouse for the first time**: The original voice of Mickey Mouse was provided by Walt Disney himself. He voiced",
+  "references": [
+   "ub iwerks"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which of the founders of United Artists had the last name nearest the beginning of the alphabet?",
+  "prediction": "Chaplin",
+  "references": [
+   "chaplin"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the green pigment used by plants to trap sunlight?",
+  "prediction": "Chlorophyll",
+  "references": [
+   "chlorophyll"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who did Jack Ruby shoot in November 1963?",
+  "prediction": "Lee Harvey Oswald",
+  "references": [
+   "lee harvey oswald"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was king of France at the time of the French Revolution?",
+  "prediction": "Louis XVI was succeeded by his son Louis XVII, but he died in captivity in 1795, and Louis XVI's brother, Louis XVIII,",
+  "references": [
+   "louis xvi",
+   "king louis xvi"
+  ],
+  "em": 1,
+  "f1": 0.1667
+ },
+ {
+  "question": "What is the name of the mountain pass which lies between Pakistan and Afghanistan?",
+  "prediction": "Khyber Pass",
+  "references": [
+   "khyber pass"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Where in a vertebrate would you find the protein myoglobin?",
+  "prediction": "Muscles",
+  "references": [
+   "muscle tissue"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Whose birthday is celebrated by a public holiday on the third Monday in January in the USA?",
+  "prediction": "Martin Luther King Jr",
+  "references": [
+   "martin luther king",
+   "luther king jr",
+   "luther king",
+   "martin luther king jr"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the principal language of Bulgaria?",
+  "prediction": "Bulgarian",
+  "references": [
+   "bulgarian"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Syrian city is said to be the oldest continually inhabited city in the world?",
+  "prediction": "4. Evaluate the most widely accepted candidate: Among these, Damascus is frequently cited as the oldest continually inhabited city in",
+  "references": [
+   "damascus"
+  ],
+  "em": 1,
+  "f1": 0.1053
+ },
+ {
+  "question": "In which Netherlands city does the United Nations International Court of Justice sit?",
+  "prediction": "The Hague",
+  "references": [
+   "hague"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the force that opposes the relative motion of two bodies that are in contact?",
+  "prediction": "Friction",
+  "references": [
+   "kinetic friction",
+   "static friction",
+   "friction coefficient",
+   "sliding friction",
+   "limiting friction",
+   "friction"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who proclaimed the People's Republic of China in 1949?",
+  "prediction": "Mao Zedong",
+  "references": [
+   "mao zedong",
+   "zedong",
+   "mao"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "How many chambers has the heart?",
+  "prediction": "Four",
+  "references": [
+   "four"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which teeth are the third molars, and are always the last to0 erupt?",
+  "prediction": "wisdom teeth",
+  "references": [
+   "3rd molar",
+   "wisdom teeth",
+   "third molar",
+   "third molar tooth"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What has a central vein called a midrib?",
+  "prediction": "** The structure in question is a leaf",
+  "references": [
+   "midrib",
+   "leaf",
+   "compound leaf",
+   "leaves",
+   "compound leaves",
+   "simple leaves",
+   "pinnately compound"
+  ],
+  "em": 1,
+  "f1": 0.3333
+ },
+ {
+  "question": "What is secreted by the pancreas to regulate blood sugar levels?",
+  "prediction": "Ins",
+  "references": [
+   "insulin"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What are the international registration letters of a vehicle from Iceland?",
+  "prediction": "IC",
+  "references": [
+   "is"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What kind of an organism is a truffle?",
+  "prediction": "Fungus",
+  "references": [
+   "fungi",
+   "kingdom fungi",
+   "fungus"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which wife of Henry VIII had already married twice before she became queen, and married for a fourth time after Henry's death?",
+  "prediction": "Anne of Cleves",
+  "references": [
+   "catherine parr",
+   "katherine parr"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which country is the castle that gives the Habsburg dynasty its name?",
+  "prediction": "Switzerland",
+  "references": [
+   "swiss",
+   "switzerland"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which hormone helps control ovulation?",
+  "prediction": "Luteinizing Hormone",
+  "references": [
+   "luteinizing",
+   "lh surge",
+   "luteinizing hormone"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the scientific name for the heart's pacemaker?",
+  "prediction": "Sinoatrial Node",
+  "references": [
+   "sinoatrial",
+   "sinus node"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Which crusade was led by Philip II Augustus of France and Richard I of England?",
+  "prediction": "3. The Third Crusade (1189-1",
+  "references": [
+   "third crusade"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "What is the name of the strong material found in plant cell walls?",
+  "prediction": "Cellulose",
+  "references": [
+   "cellulose"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What raw material is used for making glass?",
+  "prediction": "silica",
+  "references": [
+   "sand"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the term for nutrient enrichment of lakes?",
+  "prediction": "Eutrophication",
+  "references": [
+   "eutrophication"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was the first man to walk on the Moon?",
+  "prediction": "Neil Armstrong",
+  "references": [
+   "neil armstrong",
+   "one small step for man"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What name is given to the study of animal behavior?",
+  "prediction": "Ethology",
+  "references": [
+   "natural behavior",
+   "animal behavior",
+   "animal behaviour",
+   "behavioral biology"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the nickname of the French singer Edith Piaf?",
+  "prediction": "La Môme",
+  "references": [
+   "little sparrow"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the second most common gas in the atmosphere?",
+  "prediction": "3. Determine",
+  "references": [
+   "oxygen"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which rodent rears its young, called kittens, in a nest called a drey?",
+  "prediction": "Step",
+  "references": [
+   "squirrels",
+   "squirrel"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the fastest animal on two legs?",
+  "prediction": "3. Ostrich: While not running at the same speed as a cheetah, ostrich",
+  "references": [
+   "ostriches",
+   "ostrich"
+  ],
+  "em": 1,
+  "f1": 0.1667
+ },
+ {
+  "question": "What is the Pacific terminus of the Trans Siberian Railway?",
+  "prediction": "Vladivostok",
+  "references": [
+   "vladivostok"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the Milky Way?",
+  "prediction": "Galaxy",
+  "references": [
+   "milky way galaxy",
+   "milky way",
+   "our galaxy"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Proteus and Nereid are moons of which planet?",
+  "prediction": "Neptune",
+  "references": [
+   "neptune"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which home of champagne in France was also where the German High Command surrendered in WWII?",
+  "prediction": "Reims, being the capital of the Champagne region, is indeed the place where the German High Command surrendered to General Dwight D. Eisenhower on May 7, 1",
+  "references": [
+   "reims"
+  ],
+  "em": 1,
+  "f1": 0.0833
+ },
+ {
+  "question": "What is the name of the large buttock and thigh muscle?",
+  "prediction": "Gluteus Maximus",
+  "references": [
+   "gluteus maximus"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which country were motorized ambulances first used?",
+  "prediction": "3. Historical Evidence: The first documented use of an ambulance van (a type of motorized ambulance) was in France during the Franco-Prussian War in 1870",
+  "references": [
+   "france"
+  ],
+  "em": 1,
+  "f1": 0.0909
+ },
+ {
+  "question": "In what film did Oprah Winfrey make her big screen acting debut?",
+  "prediction": "The Color Purple",
+  "references": [
+   "color purple"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What id the name given to the study of birds?",
+  "prediction": "Ornithology",
+  "references": [
+   "ornithology",
+   "ornithologist",
+   "study of birds"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Mosses are classified as belonging to which part of the plant kingdom?",
+  "prediction": "3. **Match characteristics to the correct division**: Given that mosses lack vascular tissues and",
+  "references": [
+   "bryophyta"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was advertised with Eva Herzagovia using the slogan hello boys?",
+  "prediction": "3. Connect the slogan to Eva Herz",
+  "references": [
+   "wonderbra"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In what year in the 20th century was the Miss World contest held for the first time?",
+  "prediction": "1951",
+  "references": [
+   "1951"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which common mineral is used to make casts, moulds, blackboard chalk and plaster of Paris?",
+  "prediction": "- It is used in the production of blackboard",
+  "references": [
+   "gypsum"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "From which areas of space can there be no escape?",
+  "prediction": "Black Holes",
+  "references": [
+   "black holes",
+   "black hole"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Thomas Edison, who invented the lightbulb, was afraid of the dark?",
+  "prediction": "Given these points, it appears that there is no credible evidence to support the",
+  "references": [
+   "true"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which President of the Philippines was deposed in 1986?",
+  "prediction": "Ferdinand Marcos",
+  "references": [
+   "marcos"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "What type of coal is brown and fibrous?",
+  "prediction": "Lignite",
+  "references": [
+   "lignite"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the most popular natural attraction in Alaska?",
+  "prediction": "Denali National Park and Preserve",
+  "references": [
+   "denali",
+   "mount mckinley"
+  ],
+  "em": 1,
+  "f1": 0.3333
+ },
+ {
+  "question": "How many pieces are there in a standard set of dominoes?",
+  "prediction": "The total number of unique combinations can be calculated using the formula for combinations with repetition: \\( \\text{Number",
+  "references": [
+   "28"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the first British football team to win the European Cup?",
+  "prediction": "Aston Villa",
+  "references": [
+   "celtic"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What colour is the cross on the national flag of Switzerland?",
+  "prediction": "White",
+  "references": [
+   "white"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Yuan Yuan was caught carrying drugs for which Chinese team?",
+  "prediction": "Chinese national table tennis team",
+  "references": [
+   "swam",
+   "swimming"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Of which reptile are there only two species, one living in the Mississippi and the other in China?",
+  "prediction": "",
+  "references": [
+   "alligators",
+   "alligator"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The invention of what in 1867, made Alfred Nobel famous?",
+  "prediction": "Dynamite",
+  "references": [
+   "dynamite"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What were Benjy and Laska, which were sent into space in 1958?",
+  "prediction": "Dogs",
+  "references": [
+   "mice"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which city would you find O'Hare International Airport?",
+  "prediction": "Chicago",
+  "references": [
+   "chicago"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who provided the voice for Bob The Builder on his number one hit Can We Fix It?",
+  "prediction": "Step 2: After researching, it's clear that the song was performed by the",
+  "references": [
+   "neil morrissey"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the most populated city in America?",
+  "prediction": "New York City",
+  "references": [
+   "new york"
+  ],
+  "em": 1,
+  "f1": 0.8
+ },
+ {
+  "question": "Sun Yat Sen overthrew the emperor in which country establishing a republic after 2000 years of imperial rule?",
+  "prediction": "China",
+  "references": [
+   "china"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which year was the Encyclopedia Britannica first published?",
+  "prediction": "1768",
+  "references": [
+   "1768"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who wrote The Importance Of Being Earnest?",
+  "prediction": "Oscar Wilde",
+  "references": [
+   "oscar wilde"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What type of acid is extracted from the juice of lemons, oranges, limes, and grapefruit?",
+  "prediction": "Citric acid",
+  "references": [
+   "citric acid"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the Spice Girls' debut single called?",
+  "prediction": "Wannabe",
+  "references": [
+   "wannabe"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "The theme tune to which TV show starts with the line Stick a pony in me pocket?",
+  "prediction": "Blackadder",
+  "references": [
+   "only fools and horses",
+   "only fools"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which cult film, starring Harrison Ford, was based on the story Do Androids Dream of Electric Sheep?",
+  "prediction": "Blade Runner",
+  "references": [
+   "blade runner"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which parliament has the UK 87 seats for members who are elected for a five0-year term?",
+  "prediction": "House of Commons",
+  "references": [
+   "european parliament",
+   "european parliamentary"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which ITV magazine style show ran from 1968 to 1980 and featured presenters including Jenny Hanley, Mick Robertson and Tommy Boyd?",
+  "prediction": "This Week",
+  "references": [
+   "magpie"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the second lightest chemical element?",
+  "prediction": "Hel",
+  "references": [
+   "helium"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the only letter of the alphabet which does not appear in any of the names of the 50 American states?",
+  "prediction": "Q",
+  "references": [
+   "q"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What type of animal was Boris, the subject of a song by The Who?",
+  "prediction": "Bear",
+  "references": [
+   "spiders",
+   "spider"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which actor received 4 million dollars for his 10 minutes on screen in the film Superman?",
+  "prediction": "This payment was made during a time when actors' fees were often negotiated individually and could be significantly higher than the standard rates due to the actor's popularity and the",
+  "references": [
+   "marlon brando"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "More commonly known as the thigh bone, what is the medical name for the longest bone in the human body?",
+  "prediction": "Femur",
+  "references": [
+   "femur",
+   "thigh bone",
+   "femurs"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "How many verses make up the national anthem God Save The Queen?",
+  "prediction": "Three",
+  "references": [
+   "three"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the name of Kevin the teenager's friend played by Kathy Burke in a series of sketches with Harry Enfield?",
+  "prediction": "Mrs. Sloane",
+  "references": [
+   "perry"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who had a top ten hit in the UK with Cupid in 1961?",
+  "prediction": "Tom Jones",
+  "references": [
+   "sam cooke"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who wrote the novels About A Boy, How To Be Good and High Fidelity?",
+  "prediction": "Nick Hornby",
+  "references": [
+   "nick hornby"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What type of seaweed grows up to 100 meters in length, and is farmed for its alginates?",
+  "prediction": "Undaria pinnatifida",
+  "references": [
+   "kelp"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What seven letter word, beginning with the letters 'Ra' is a palindrome?",
+  "prediction": "level",
+  "references": [
+   "racecar"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the most common blood type in humans? A, B or O?",
+  "prediction": "4. **Type AB**: This is the universal recipient type,",
+  "references": [
+   "o"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The melody for which famous song was written by sisters and school teachers Patty and Mildred Hill in Kentucky in 1893?",
+  "prediction": "\"Good Morning to All\"",
+  "references": [
+   "happy birthday"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In 1976, which gymnast scored 7 maximum scores of 10 as she won three gold medals, one silver and one bronze?",
+  "prediction": "Nadia Comaneci",
+  "references": [
+   "comaneci",
+   "nadia comaneci"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "The Canary Islands are named after what animal?",
+  "prediction": "Canary",
+  "references": [
+   "dogs",
+   "dog"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which force is nothing more than the bending of space and time?",
+  "prediction": "Gravity",
+  "references": [
+   "gravity"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the longest word can be typed using only the top row of letters on a typewriter?",
+  "prediction": "typewriter",
+  "references": [
+   "typewriter"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which country is known to its people as Suomen Tasavalta?",
+  "prediction": "Finland",
+  "references": [
+   "suomen tasavalta",
+   "republic of finland",
+   "finland",
+   "northern finland"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Eastenders actor has played the policeman Nick Rowan on TV?",
+  "prediction": "Danny Dyer",
+  "references": [
+   "nick berry"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Pop Idol had a number one hit in 2004 called All This Time?",
+  "prediction": "Kelly Rowland",
+  "references": [
+   "michelle mcmanus"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which King did Guy Fawkes attempt to kill with his gunpowder plot?",
+  "prediction": "James I",
+  "references": [
+   "james i"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the final event in a decathlon?",
+  "prediction": "1500 meters",
+  "references": [
+   "1500 metres"
+  ],
+  "em": 0,
+  "f1": 0.5
+ },
+ {
+  "question": "Which brand of beer does Homer Simpson drink regularly?",
+  "prediction": "Molson",
+  "references": [
+   "duff"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the largest city in Turkey?",
+  "prediction": "Istanbul",
+  "references": [
+   "istanbul"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the alcoholic ingredient of Irish coffee?",
+  "prediction": "�",
+  "references": [
+   "whiskey"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which capital city would you find Charles Bridge and Wenceslas Square?",
+  "prediction": "Prague",
+  "references": [
+   "prague"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who directed the films Thelma and Louise, Hannibal and Black Hawk Down?",
+  "prediction": "Ridley Scott",
+  "references": [
+   "ridley scott"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "On the London Underground, which is the only line to connect at some point with every other line on the system?",
+  "prediction": "Circle Line",
+  "references": [
+   "jubilee line"
+  ],
+  "em": 0,
+  "f1": 0.5
+ },
+ {
+  "question": "From which animal does Haggis come?",
+  "prediction": "Sheep",
+  "references": [
+   "sheep"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which film was the song White Christmas first sung?",
+  "prediction": "Holiday Inn",
+  "references": [
+   "holiday inn"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which film sees Clint Eastwood, Tommy Lee Jones, James Garner and Donald Sutherland as retired astronauts?",
+  "prediction": "Space Cowboys",
+  "references": [
+   "space cowboys"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Channel 4 TV show's presenters included Mark Lamarr, Amanda De Cadenet and Terry Christian?",
+  "prediction": "The Big Breakfast",
+  "references": [
+   "word"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which animal has the longest gestation period at around 22 months?",
+  "prediction": "Elephant",
+  "references": [
+   "elephant"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the name of Roland Rat's gerbil friend?",
+  "prediction": "Ralph",
+  "references": [
+   "kevin"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What word is used to describe someone who is neither left or right handed, but can use both hands with equal ease?",
+  "prediction": "Ambidextrous",
+  "references": [
+   "ambidexterity",
+   "ambidextrous"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which film features the characters Sally Albright and Harry Burns?",
+  "prediction": "Fast Times at Barrington High",
+  "references": [
+   "sally albright"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which year did St George die?",
+  "prediction": "303 AD",
+  "references": [
+   "303"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "What type of animal is the star of the 2005 film Racing Stripes?",
+  "prediction": "Horse",
+  "references": [
+   "zebra",
+   "baby zebra",
+   "zebras"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which song begins with the line The taxman's taken all my dough?",
+  "prediction": "Taxman",
+  "references": [
+   "sunny afternoon"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In years and days, how old was Luigina Giavotti when she won a silver medal in gymnastics in 1928, and is still the youngest medal winner today?",
+  "prediction": "- From 1913 to 19",
+  "references": [
+   "11 years and 302 days"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who composed the musical theme for the Pink Panther?",
+  "prediction": "Henry Mancini",
+  "references": [
+   "henry mancini"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Scottish newspaper features the Broons and Oor Wullie?",
+  "prediction": "Sunday Post",
+  "references": [
+   "sunday post"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Asian country was once called Siam?",
+  "prediction": "Step 2: Historically, Siam was the name used for Thailand from approximately 1768 to 1939. In 1939, the country officially changed its name to Thailand, which means \"land of the free\" in the Thai language",
+  "references": [
+   "thailand",
+   "muang thai",
+   "siam"
+  ],
+  "em": 1,
+  "f1": 0.0625
+ },
+ {
+  "question": "In which country was Marie Curie born? Poland, Austria or Switzerland?",
+  "prediction": "Poland",
+  "references": [
+   "poland"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Buddy Holly and the Big Bopper were two of the three musicians who died in a plane crash in February 1959. Who was the other one?",
+  "prediction": "Ritchie Valens",
+  "references": [
+   "ritchie valens"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In a standard deck of cards, how many Kings have a moustache?",
+  "prediction": "1",
+  "references": [
+   "three"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What colour is the bottom stripe on the U.S. flag?",
+  "prediction": "white",
+  "references": [
+   "red"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What nationality was the painter Vincent Van Gogh?",
+  "prediction": "Dutch",
+  "references": [
+   "dutch"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "According to the film Gremlins, if you are looking after a Gremlin you should not feed him after midnight, not get him wet and not expose him to what?",
+  "prediction": "sunlight",
+  "references": [
+   "bright light"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which act has had more Christmas number one singles than any other?",
+  "prediction": "3. **The Shirelles** - With \"The Best is Yet to Come\" which was a number one in 19",
+  "references": [
+   "fab four",
+   "beatles"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who is the last English-born player to win the men's singles title at Wimbledon?",
+  "prediction": "Andy Murray",
+  "references": [
+   "fred perry"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the name given to the largest bee in a hive?",
+  "prediction": "Queen Bee",
+  "references": [
+   "queen"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Who dubbed Miss Piggy's singing voice in The Muppet Movie?",
+  "prediction": "Cheryl L",
+  "references": [
+   "johnny mathis"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who dated actress Elizabeth Hurley between 2000 and 2001 and denied he was the father of her son born in 2002 before a DNA test proved otherwise?",
+  "prediction": "Step 4: Confirm that David Beckham dated Elizabeth Hurley from 2000 to 2001, denied being the father",
+  "references": [
+   "stephen bing"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the most common pub name in the UK?",
+  "prediction": "The Red Lion",
+  "references": [
+   "red lion"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which famous book features the character of Bob Cratchit?",
+  "prediction": "A Christmas Carol",
+  "references": [
+   "christmas carol"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Wayne Rooney signed for Manchester United from which other Premiership Club?",
+  "prediction": "Everton",
+  "references": [
+   "everton"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which scientist was Time magazine's \"Person of the 20th Century\"?",
+  "prediction": "Einstein",
+  "references": [
+   "albert einstein",
+   "einstein"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What name is given to a baby marsupial?",
+  "prediction": "Joey",
+  "references": [
+   "joey"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which actress married Dennis Quaid on Valentine's Day in 1991?",
+  "prediction": "Brooke Shields",
+  "references": [
+   "margaret mary emily anne hyra",
+   "meg ryan"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which stand-up comedian presents 8 Out Of 10 Cats and Distraction?",
+  "prediction": "2. **Distraction**: This is another British comedy panel show that aired from 2006 to 2007. It",
+  "references": [
+   "jimmy carr"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The Kray twins were convicted of the murder of George Cornell in the East End of London in 1966. What was the name of the pub in which he was shot?",
+  "prediction": "The Budget",
+  "references": [
+   "blind beggar"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Author Dick Francis is famous for writing novels based around which sport?",
+  "prediction": "Horse Racing",
+  "references": [
+   "horse races",
+   "horse racing",
+   "horse-racing"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which team beat American Samoa 31-0 in a qualifying match for the 2002 World Cup, but still failed to qualify?",
+  "prediction": "Step 4: Confirm the failure to qualify - The question states that despite this win, the winning team did not qualify for the 2002 World Cup",
+  "references": [
+   "australia"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which sport or pastime can you see nose walking?",
+  "prediction": "Acrobatics",
+  "references": [
+   "surfing"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was the first person to sell one million records?",
+  "prediction": "3. A significant milestone was reached by Enrico Caruso, an Italian opera singer, when his recordings began to sell",
+  "references": [
+   "enrico caruso"
+  ],
+  "em": 1,
+  "f1": 0.2105
+ },
+ {
+  "question": "How meny times have Liverpool won the Europion Cup?",
+  "prediction": "Five",
+  "references": [
+   "five"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What name is given to the home of a beaver?",
+  "prediction": "Lodge",
+  "references": [
+   "lodges"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In cricket, what is the score of 111 known as?",
+  "prediction": "3. **Conclusion**: Since there isn't a specific term for 111 in cricket, it remains just \"111\"",
+  "references": [
+   "nelson"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which 1993 film does a boy called Jonah write to a woman called Annie, asking her to meet his father at the Empire State building on St. Valentine's Day?",
+  "prediction": "Step 4: Verify that in \"Sleepless in Seattle,\" a young boy named Benjamin (often referred to as Jonah) writes to a woman named Annie, inviting her to meet his father at the Empire State Building on",
+  "references": [
+   "sleepless in seattle"
+  ],
+  "em": 1,
+  "f1": 0.1667
+ },
+ {
+  "question": "Who was the author of 'The Old Curiosity Shop'?",
+  "prediction": "Charles Dickens",
+  "references": [
+   "charles dickens",
+   "dickens"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who presented Family Fortunes in the two years between Bob Monkhouse and Les Dennis?",
+  "prediction": "3. Researching the host for this period, it is known that during this time, Barry Cryer",
+  "references": [
+   "max bygraves"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The Ducati is manufactured in which city and what country?",
+  "prediction": "Bologna, Italy",
+  "references": [
+   "bologna"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "What is the name of the device made of wood and horsehair that is used to play a violin?",
+  "prediction": "Bow",
+  "references": [
+   "bows",
+   "bow"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which branch of science has four fundamental principles: addition, subtraction, multiplication, and division.",
+  "prediction": "Mathematics",
+  "references": [
+   "arithmetic operations",
+   "arithmetic"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who won the Ladies singles title at Wimbledon in 2004?",
+  "prediction": "Maria Sharapova",
+  "references": [
+   "maria sharapova",
+   "sharapova"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which planet has moons named after Shakespearean characters?",
+  "prediction": "6. **Saturn** - Has numerous moons,",
+  "references": [
+   "uranus"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What sport or pastime would you be playing if your balls were black and blue and your opponent's were red and yellow?",
+  "prediction": "Table Tennis",
+  "references": [
+   "croquet",
+   "croquet mallet"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the nickname given to premiership footballer Neil Ruddock?",
+  "prediction": "The Bull",
+  "references": [
+   "razor"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "To which poet does Il Postino deliver mail?",
+  "prediction": "Pablo Neruda",
+  "references": [
+   "pablo neruda"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "For what did Einstien gat Nobel prize in Physics?",
+  "prediction": "Photoelectric effect",
+  "references": [
+   "photoelectric effect",
+   "photoelectric"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Suger Mice was a 1987 single for which British rock band?",
+  "prediction": "Squeeze",
+  "references": [
+   "marillion"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In the 1999 film Stuart Little, who plays the part of Mrs Eleanor Little?",
+  "prediction": "Lauren Bacall",
+  "references": [
+   "geena davis"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In Greek mythology who was the twin of Polydeuces?",
+  "prediction": "Castor",
+  "references": [
+   "castor"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who wrote the Bourne trilogy of books, made into movies starring Matt Damon?",
+  "prediction": "Robert Ludlum",
+  "references": [
+   "michael shephard",
+   "jonathan ryder",
+   "robert ludlum"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who stars in the 2008 movie Seven Pounds?",
+  "prediction": "Will Smith",
+  "references": [
+   "will smith"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the scientific name given to tea?",
+  "prediction": "Camellia sinensis",
+  "references": [
+   "camellia sinensis",
+   "thea viridis",
+   "thea bohea",
+   "thea sinensis",
+   "tea plant"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the name of the plastic bit on the end of shoelaces?",
+  "prediction": "Aglet",
+  "references": [
+   "aglet"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was part man, part machine, all cop and hailed from a futuristic Detroit?",
+  "prediction": "RoboCop",
+  "references": [
+   "robocop"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "The Bible tells of 3 wise men visiting Jesus after his birth, but in which of the Gospels does this appear?",
+  "prediction": "Matthew",
+  "references": [
+   "matthew"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "The river Danube flows into which sea?",
+  "prediction": "Black Sea",
+  "references": [
+   "black sea"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which decade were ZIP codes introduced in the USA?",
+  "prediction": "1950s",
+  "references": [
+   "1960s"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Was James II known as: James The Bald, Fiery Face, or The Red King?",
+  "prediction": "Given these examinations, none of the provided nicknames directly apply to James",
+  "references": [
+   "fiery face"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "On Red Nose Day 2001 who won Celebrity Big Brother?",
+  "prediction": "Hayley Atwell",
+  "references": [
+   "jack dee"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which British footballer has the most number of International caps?",
+  "prediction": "Gary Lineker",
+  "references": [
+   "peter shilton"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Tony Hadley was the lead singer with which 1980s new romantic band?",
+  "prediction": "Spandau Ballet",
+  "references": [
+   "spandau ballet"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is Robin Williams character called in Good Morning Vietnam?",
+  "prediction": "Adrian Cronauer",
+  "references": [
+   "adrian"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Macbeth belonged to which royal house or dynasty?",
+  "prediction": "2. **Identifying the Dynasty**: Macbeth was a real historical figure who ruled Scotland from approximately 1040 to 1057 AD. He was part of the House of Douglas, but more specifically, he was a member of the Scottish nob",
+  "references": [
+   "dunkeld dynasty",
+   "house of dunkeld"
+  ],
+  "em": 0,
+  "f1": 0.1111
+ },
+ {
+  "question": "Who is the Vice-President for George W Bush?",
+  "prediction": "Dick Cheney served as both the first",
+  "references": [
+   "dick cheney"
+  ],
+  "em": 1,
+  "f1": 0.5
+ },
+ {
+  "question": "Which P is the correct technical term for the art of making and displaying fireworks?",
+  "prediction": "Pyrotechnics",
+  "references": [
+   "pyrotechnic",
+   "pyrotechnics"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the name of the London Underground station in EastEnders?",
+  "prediction": "Aldgate",
+  "references": [
+   "walford east",
+   "walford"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In Greek mythology, where do righteous souls go after death?",
+  "prediction": "Elysian Fields",
+  "references": [
+   "elysian fields"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who played King Arthur in the 1967 musical film Camelot?",
+  "prediction": "Richard Harris",
+  "references": [
+   "richard harris"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Jackson appeared in Celebrity Big Brother in January 2009?",
+  "prediction": "Michael",
+  "references": [
+   "la toya jackson"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In 2009, who was convicted of the murder of Lana Clarkson?",
+  "prediction": "Robert Blake",
+  "references": [
+   "phil spector",
+   "phillip spector"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the surname of the butler played by Gordon Jackson in Upstairs Downstairs?",
+  "prediction": "Sedley",
+  "references": [
+   "hudson"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was the seventh president of the United States?",
+  "prediction": "Andrew Jackson",
+  "references": [
+   "andrew jackson"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the full name of the train robber played by Phil Collins in a 1988 movie?",
+  "prediction": "Charlie Croker",
+  "references": [
+   "buster edwards"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which mammal constructs a lodge in which to store food, rear young, and pass the winter?",
+  "prediction": "Step 4: Identify the correct answer - The red fox (Vulpes vulpes",
+  "references": [
+   "beaver",
+   "beavers"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which country grows the largest number of mangoes?",
+  "prediction": "India",
+  "references": [
+   "india"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Athos and Porthos are two of the 3 musketeers, name the other one.",
+  "prediction": "Aramis",
+  "references": [
+   "aramis"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "How many episodes of Prisoner: Cell Block H were made?",
+  "prediction": "6",
+  "references": [
+   "692"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The left side of the heart pumps blood to all parts of the body, but the right side pumps blood to which organ in particular?",
+  "prediction": "lungs",
+  "references": [
+   "lungs",
+   "pulmonary"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "The age of the railway began in which year with the introduction of the Liverpool-Manchester line?",
+  "prediction": "1830",
+  "references": [
+   "1830"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which famous cowboy was created by George W. Trendle?",
+  "prediction": "Hopalong Cassidy",
+  "references": [
+   "lone ranger"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Apart from being warm blooded and giving birth to live young, what do mammals produce to differentiate them from other families of animals?",
+  "prediction": "milk",
+  "references": [
+   "milk"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which film features the Dawes Tomes Mousley Grubbs Fidelity Fiduciary Bank?",
+  "prediction": "- In \"It's a Wonderful Life,\" the character of Mr. G",
+  "references": [
+   "mary poppins"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which cartoon character lives in a pineapple under the sea?",
+  "prediction": "SpongeBob SquarePants",
+  "references": [
+   "spongebob squarepants",
+   "spongebob",
+   "squarepants"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In 1961, who famously scored six goals in a match but still ended up on the losing team in a FA Cup tie?",
+  "prediction": "Step 4: Verify that Jimmy Greaves indeed scored six goals for Chelsea against Leicester City in an FA Cup third-round replay on January 14, 1961, but Chelsea lost the match",
+  "references": [
+   "denis law"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The American legal drama Shark ran from Sept 06 to May 08. Who starred in the title role, playing Sebastian Stark?",
+  "prediction": "Michael J. Fox",
+  "references": [
+   "james woods"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "If it was Phil Mickelson in 2006, Zach Johnson in 2007, and Trevor Immelman in 2008, who was it in 2009?",
+  "prediction": "Adam Scott",
+  "references": [
+   "angel cabrera"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which serial killer hanged himself in Wakefield Prison in January 2004, four years after being found guilty of 15 murders?",
+  "prediction": "Ian Brady",
+  "references": [
+   "harold shipman",
+   "primrose shipman"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Name the tv series about FBI agent Don Eppes and his mathematical genius brother Charlie",
+  "prediction": "Numb3rs",
+  "references": [
+   "numb3rs"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which country are the Angel Falls, the highest waterfall in the world?",
+  "prediction": "Venezuela",
+  "references": [
+   "venezuela",
+   "venezuelan"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which town in East Sussex now stands on the site of the battle of Hastings?",
+  "prediction": "Battle",
+  "references": [
+   "battle",
+   "battle of"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In what year did Edward Vlll abdicate?",
+  "prediction": "1936",
+  "references": [
+   "1936"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Gjetost is the national cheese of which country?",
+  "prediction": "Based on this information, Gjetost is the national",
+  "references": [
+   "norway"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "All children except one grow up.",
+  "prediction": "Paradox",
+  "references": [
+   "peter pan"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the name of CS Lewis' 7 book fantasy?",
+  "prediction": "The Chronicles of Narnia",
+  "references": [
+   "narnia",
+   "chronicles of narnia"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Ecuador has a border with Peru and which other country ?",
+  "prediction": "Colombia",
+  "references": [
+   "colombia"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Red Stripe lager comes from which country?",
+  "prediction": "Jamaica",
+  "references": [
+   "jamaica"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who is the patron saint of lost causes?",
+  "prediction": "Kateri Tekakwitha",
+  "references": [
+   "patron saint of lost causes",
+   "st jude",
+   "thaddaeus",
+   "saint jude"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "A youngberry is a cross between a dewberry and what else?",
+  "prediction": "Research confirms that youngberries",
+  "references": [
+   "blackberry"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who designed Madonna's wedding dress for her marriage to Guy Ritchie?",
+  "prediction": "Given these points, the most likely designer would be a high-profile fashion designer known for working with celebrities. One of the most famous designers associated with Madonna is David Tutera,",
+  "references": [
+   "stella mccartney"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the name of the kangaroo often mistaken by Sylvester the cat to be a giant mouse?",
+  "prediction": "Speedy",
+  "references": [
+   "giant mouse",
+   "hippety hopper"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who killed Jean Paul Marat?",
+  "prediction": "Charlotte Corday",
+  "references": [
+   "charlotte corday"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "By what name is comic book villain Oswald Chesterfield Cobblepot better known?",
+  "prediction": "The Penguin",
+  "references": [
+   "oswald chesterfield cobblepot",
+   "cobblepot",
+   "penguin"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What nationality was three time Olympic gold medallist in figure skating Sonja Henie?",
+  "prediction": "Norwegian",
+  "references": [
+   "norwegian"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who killed Lee harvey Oswald?",
+  "prediction": "Jack Ruby",
+  "references": [
+   "jack ruby",
+   "jacob rubenstein"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the most abundant substance in the plant kingdom, which no mammal produces the enzyme to digest?",
+  "prediction": "Cellulose",
+  "references": [
+   "cellulose"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What kind of an animal is a wireworm?",
+  "prediction": "Wireworms are considered grubs or larvae, specifically of the",
+  "references": [
+   "beetle"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Italian fashion designer was shot dead on the steps of his Miami mansion in 1997?",
+  "prediction": "Gianni Versace",
+  "references": [
+   "gianni versace"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Marilyn Monroe starred in the Seven Year Itch. Who directed it?",
+  "prediction": "Walter Lang",
+  "references": [
+   "billy wilder"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What public school did the Duke of Edinburgh and Prince Charles attend?",
+  "prediction": "- Prince Charles attended Spring Hill Prep School in Surrey before moving to Cheam School, and then went on to attend Gordonstoun School from 196",
+  "references": [
+   "gordonstoun"
+  ],
+  "em": 1,
+  "f1": 0.08
+ },
+ {
+  "question": "In the TV show Camberwick Green, who lived in Colly's Mill?",
+  "prediction": "After considering these points, I remember that the main characters who lived in Colly's Mill were the Biddons. They were the owners and operators of",
+  "references": [
+   "camberwick green",
+   "windy miller"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "At which Winter Olympic host city would you find the Cresta Run?",
+  "prediction": "St. Moritz",
+  "references": [
+   "st moritz"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who is Arthur Wellesley better known as?",
+  "prediction": "Duke of Wellington",
+  "references": [
+   "1st duke of wellington",
+   "iron duke",
+   "duke of wellington",
+   "arthur wellesley 1st duke of wellington"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who played Dr. Doug Ross on the TV show E.R.?",
+  "prediction": "Eric Stoltz",
+  "references": [
+   "george clooney"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the name of the comedy written by Ray Galton, Alan Simpson which aired 57 episodes?",
+  "prediction": "Steptoe and Son",
+  "references": [
+   "steptoe and son"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which horse racing jockey was sometimes referred to as the long fellow?",
+  "prediction": "Eddie Maple",
+  "references": [
+   "lester piggott"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who played the character Mrs. Merton on TV?",
+  "prediction": "Estelle Getty",
+  "references": [
+   "caroline aherne"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which 1986 Peter Weir movie and based on a Paul Theroux novel starred Harrison Ford, Helen Mirren and River Phoenix?",
+  "prediction": "Far and Away",
+  "references": [
+   "mosquito coast"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which former West Indian fast bowler was known as 'Whispering Death'?",
+  "prediction": "Step 3: Historical records confirm that Malcolm Marshall was indeed called 'Whispering Death'",
+  "references": [
+   "michael holding"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "True or False: Sharks do not blink?",
+  "prediction": "Given these points, sharks use their nictitating membrane rather than blinking to protect and maintain their eyes",
+  "references": [
+   "true"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "With which game would you use a squidger, a circular disc between 25mm and 51 mm?",
+  "prediction": "Croquet",
+  "references": [
+   "tiddlywinks"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Canadian born  actress was the star in the movie Barb Wire?",
+  "prediction": "None",
+  "references": [
+   "pamela anderson"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who played the role of Kate Flax in the 1990 film Mermaids?",
+  "prediction": "Daryl Hannah",
+  "references": [
+   "christina ricci"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which economist wrote The Wealth Of Nations?",
+  "prediction": "Adam Smith",
+  "references": [
+   "smith",
+   "adam smith"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "When Mr Benn was looking for an adventure, what type of shop did he visit?",
+  "prediction": "Toy Shop",
+  "references": [
+   "fancy dress shop"
+  ],
+  "em": 0,
+  "f1": 0.4
+ },
+ {
+  "question": "Which notorious murderer lived at 10 Rillington Place?",
+  "prediction": "Step 4: Verify the information - Reggie Christie, also known as Reginald Christie, was indeed a notorious murderer who lived at this address and was responsible for several killings",
+  "references": [
+   "john christie"
+  ],
+  "em": 0,
+  "f1": 0.0714
+ },
+ {
+  "question": "If you heard the catchphrase \"They're great\" what would expect to be advertised?",
+  "prediction": "Step 4: Make an educated guess based on",
+  "references": [
+   "sugar frosted flakes",
+   "frosted flakes"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which `B` was the name of the mechanical shark used in the original `Jaws` film?",
+  "prediction": "Bruce",
+  "references": [
+   "bruce"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who killed Robert F Kennedy?",
+  "prediction": "Sirhan Sirhan",
+  "references": [
+   "sirhan bishara sirhan",
+   "sirhan sirhan"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which golf shot is the opposite of a slice?",
+  "prediction": "Hook",
+  "references": [
+   "hook"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which postcode area are the Wimbledon Championships held? SW15, SW17 or SW19?",
+  "prediction": "SW19",
+  "references": [
+   "sw18",
+   "sw17",
+   "sw19",
+   "sw15"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the surname of the woman who was the inspiration behind the Rolling Stones song Angie?",
+  "prediction": "Bowie",
+  "references": [
+   "bowie"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which well known couple live at Bagshot Park in Surrey?",
+  "prediction": "Prince Charles and Camilla Parker Bowles",
+  "references": [
+   "earl of wessex",
+   "prince edward"
+  ],
+  "em": 0,
+  "f1": 0.25
+ },
+ {
+  "question": "Which part of the human body produces insulin?",
+  "prediction": "Pancreas",
+  "references": [
+   "pancreatic",
+   "pancreas"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the name of the Salvador Dali painting that shows clocks oozing over a landscape?",
+  "prediction": "The Persistence of Memory",
+  "references": [
+   "persistence of memory",
+   "melting clocks",
+   "melted clocks"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "The Sign Of Four was a detective story written by which author?",
+  "prediction": "Sir Arthur Conan Doyle",
+  "references": [
+   "arthur conan doyle",
+   "sir arthur conan doyle",
+   "conan doyle"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who lives in the Hundred Acre Wood?",
+  "prediction": "Winnie-the-Pooh and friends",
+  "references": [
+   "pooh bear",
+   "pooh",
+   "hunny",
+   "bear of very little brain"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What number in Bingo is sometimes referred to as Heinz varieties?",
+  "prediction": "The term \"Heinz varieties\" in Bingo typically refers to the numbers 68 through 75, as these",
+  "references": [
+   "57"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which snooker player was simply known as 'The Grinder'?",
+  "prediction": "3. **Neil Robertson** - Has been noted for his ability",
+  "references": [
+   "cliff thorburn"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which British band named themselves after a South African football team?",
+  "prediction": "The Jocks",
+  "references": [
+   "kaiser chiefs"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which actress left Eastenders for Hollywood only to flop as The Bionic Woman?",
+  "prediction": "Lalla Ward",
+  "references": [
+   "michelle ryan"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Bonar Law is the only Prime Minister not born in the UK. In which country was he born?",
+  "prediction": "Canada",
+  "references": [
+   "canada"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the name of the ferry that capsized after leaving Zeebrugge in 1987",
+  "prediction": "Moya",
+  "references": [
+   "herald of free enterprise",
+   "zeebrugge disaster"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In what year was the first episode of Doctor Who broadcast? 1959, 1963 or 1967?",
+  "prediction": "1963",
+  "references": [
+   "1963"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the name of the chain of islands in the southwestern Philippines?",
+  "prediction": "Sulu Archipelago",
+  "references": [
+   "sulu archipelago"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was the only Prime Minister of Britain to be assassinated?",
+  "prediction": "Spencer Perceval",
+  "references": [
+   "spencer perceval"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Name the magician who first introduced us to Basil Brush.",
+  "prediction": "Eric Bunn",
+  "references": [
+   "david nixon"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which year did the first episode of Minder take place?",
+  "prediction": "1970",
+  "references": [
+   "1979"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What are the shape-shifting foxes of the Japanese folklore?",
+  "prediction": "Kitsune",
+  "references": [
+   "kitsune"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the second most common word in written English?",
+  "prediction": "be",
+  "references": [
+   "of"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which river originates in the Taurus Mountains, and flows through Syria and Iraq?",
+  "prediction": "Euphrates",
+  "references": [
+   "euphrates",
+   "river euphrates",
+   "euphrates river"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In the Commonwealth games in Delhi, which British athlete won the mens 200m gold medal?",
+  "prediction": "Dwain Chambers",
+  "references": [
+   "leon baptiste"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was famous for popularising the 'little black dress' in the 1920s?",
+  "prediction": "Coco Chanel",
+  "references": [
+   "coco chanel"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which wedding anniversary is celebrated with paper",
+  "prediction": "- 25th anniversary",
+  "references": [
+   "1st",
+   "first",
+   "firſt"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the name of the enzyme usually added to milk to coagulate it, to make \"curds and whey\"?",
+  "prediction": "rennet",
+  "references": [
+   "animal rennet",
+   "rennet"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Eastenders character had a dog called Willy?",
+  "prediction": "Phil Mitchell",
+  "references": [
+   "ethel skinner"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which character has been played by Jack Lord, Cec Linder, Rik Van Nutter, Norman Burton, David Hedison, John Terry, David Hedison and Jeffrey Wright?",
+  "prediction": "Dr. Christian Barnard",
+  "references": [
+   "felix leiter"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "On which island are the Cuillin Hills?",
+  "prediction": "Isle of Skye",
+  "references": [
+   "isle of skye",
+   "skye"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In 1969, a man was stabbed to death by a member of the Hell's Angels at a Rolling Stones concert. Where was the concert held?",
+  "prediction": "Altamont Speedway",
+  "references": [
+   "altamont"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "Which singer picked up three Ivor Novello awards in May, including songwriter of the year for her hit single, The Fear?",
+  "prediction": "- However, Dua Lipa did win the Ivor Novello Award for Songwriter of the Year in 2021",
+  "references": [
+   "lily allen"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which dancer has only one notable film cameo, appearing with Sean Connery in the 1979 movie The First Great Train Robbery, breaking into a guarded station office.",
+  "prediction": "Margot Fonteyn",
+  "references": [
+   "wayne sleep"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who sang the theme song for the TV show 'Rawhide'?",
+  "prediction": "Gene Autry",
+  "references": [
+   "frankie laine",
+   "francesco paolo lovecchio"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who made Victor Krum's wand?",
+  "prediction": "Ollivander",
+  "references": [
+   "gregorovitch"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the name of the company that owned the spaceship Red Dwarf?",
+  "prediction": "Jetix",
+  "references": [
+   "red dwarf",
+   "computer senility"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which cockney private detective, co-created by Terry Venables, was portrayed on TV by Nicholas Ball?",
+  "prediction": "Step 3: Correct the confusion and identify the",
+  "references": [
+   "james hazell"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "A Long Island Iced Tea is a cocktail based on vodka, gin, tequila, and which other spirit?",
+  "prediction": "Triple Sec",
+  "references": [
+   "light rum",
+   "rum",
+   "white rum"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What kind of creature is Firenze?",
+  "prediction": "Centaur",
+  "references": [
+   "centaurs",
+   "centaur"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which famous woman in history had a cottage in Shottery in Warwickshire?",
+  "prediction": "Anne Hathaway",
+  "references": [
+   "anne hathaway"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "How many female P.Ms have there been?",
+  "prediction": "Given the lack of a",
+  "references": [
+   "1",
+   "one"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In which country is the region Dalmatia?",
+  "prediction": "Croatia",
+  "references": [
+   "croatia"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who plays the role of Bubble in Absolutely Fabulous?",
+  "prediction": "Edwina Renshaw",
+  "references": [
+   "jane horrocks"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who won the 2010 Giro D'Italia?",
+  "prediction": "Cadel Evans",
+  "references": [
+   "ivan basso"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "A Cuba Libre is based on which spirit",
+  "prediction": "rum",
+  "references": [
+   "light rum",
+   "rum",
+   "dark rum"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which American singer was born Eleanora Fagan?",
+  "prediction": "Billie Holiday",
+  "references": [
+   "eleanora fagan"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which  constellation contains many bright shining stars, such as Regulus?",
+  "prediction": "Leo",
+  "references": [
+   "leo"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who in 1975 became the first black man to win a Wimbledon singles title?",
+  "prediction": "Arthur Ashe",
+  "references": [
+   "arthur ashe"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "1986 film starring Goldie Hawn as a High School football coach.",
+  "prediction": "Private Lessons",
+  "references": [
+   "wildcats"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which famous resident resides at Highgrove House?",
+  "prediction": "Prince Charles",
+  "references": [
+   "prince of wales"
+  ],
+  "em": 0,
+  "f1": 0.4
+ },
+ {
+  "question": "In which 1969 movie did Michael Caine appear with his brother Stanley.",
+  "prediction": "Midnight Cowboy",
+  "references": [
+   "italian job",
+   "charlie croker"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which South African fast bowler had the nickname White Lightning",
+  "prediction": "Chris Cairns",
+  "references": [
+   "allan donald"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who had chart hits which included Annie`s Song and Rocky Mountain High?",
+  "prediction": "Gary Numan",
+  "references": [
+   "john denver"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Italian explorer had ships named Nina, Pinta and Santa Maria?",
+  "prediction": "Columbus",
+  "references": [
+   "christopher columbus"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "In which country is Dubrovnik?",
+  "prediction": "Croatia",
+  "references": [
+   "republic of croatia",
+   "croatia"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the name of the cat in Rising Damp?",
+  "prediction": "Whiskers",
+  "references": [
+   "vienna"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who won the men's singles title at Wimbledon in 1987?",
+  "prediction": "Boris Becker",
+  "references": [
+   "pat cash"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Where in London were the first escalators installed in 1898?",
+  "prediction": "Tower Bridge",
+  "references": [
+   "harrods"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In Harry Potter And The Goblet Of Fire, which dragon did Harry have to defeat?",
+  "prediction": "Hungarian Horntail",
+  "references": [
+   "pigwidgeon",
+   "peeves",
+   "hungarian horntail"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the currency of India?",
+  "prediction": "Indian Rupee",
+  "references": [
+   "rs",
+   "rupee"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "In which sitcom did Penelope Wilton play the wife of Richard Briers?",
+  "prediction": "The Good Life",
+  "references": [
+   "ever decreasing circles"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What are the flat treeless plains of Argentina called?",
+  "prediction": "Pampas",
+  "references": [
+   "pampas"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "How many avenues radiate from the Arc de Triomphe?",
+  "prediction": "The Arc de Triomphe is located at the western end of the Champs-Élysées in Paris. It is surrounded by a circular avenue known as the Avenue des Champs-Élysées, which leads to the Arc de Triomphe. From this point, 12放射线（radiating avenues",
+  "references": [
+   "12"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who did Simple Simon meet on his way to the fair?",
+  "prediction": "Simple Simon met a pieman",
+  "references": [
+   "pieman"
+  ],
+  "em": 1,
+  "f1": 0.4
+ },
+ {
+  "question": "The Asian Tsunami or Boxing day tsunami that hit Thailand, Indonesia and many other countries happened in what year?",
+  "prediction": "2004",
+  "references": [
+   "2004"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Produced between 1970 and 1974, what is a Bond Bug?",
+  "prediction": "Bond Motor Company",
+  "references": [
+   "car"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Anellini pasta is what type of shape?",
+  "prediction": "Rings/Hoops",
+  "references": [
+   "rings",
+   "ring"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "-Day in 1944 was the greatest sea-bourn invasion in history. What was the code name for the operation?",
+  "prediction": "Operation Overlord",
+  "references": [
+   "operation overlord"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Are you going to come quietly, or do I have to use earplugs?",
+  "prediction": "Compliance",
+  "references": [
+   "spike milligan"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What is the name of the helicopter used to transport the President of the United States",
+  "prediction": "Marine One",
+  "references": [
+   "marine one"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which queen consort of England is associated with Hever Castle in Kent?",
+  "prediction": "Anne Boleyn",
+  "references": [
+   "anne boleyn"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In Only Fools And Horses, Rodney Trotter shares his middle name with which London football club?",
+  "prediction": "Arsenal",
+  "references": [
+   "charlton"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What building in Scotland is said to house the Holy Grail and features prominently at the end of The Da Vinci Code?",
+  "prediction": "Rosslyn Chapel",
+  "references": [
+   "rosslyn chapel"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Name the game show, presented by Leslie Grantham and Melinda Messenger, where contestants were set physical and mental challenges?",
+  "prediction": "The Weakest Link",
+  "references": [
+   "fort boyard"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who played the character Mr Chips in the 2002 TV adaptation of Goodbye Mr Chips",
+  "prediction": "Step 4: Verify Richard Harris's involvement - Richard Harris, a well-known",
+  "references": [
+   "martin clunes"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which cartoon series featured the characters Lion-o, Cheetera, Tygra and Snarf/",
+  "prediction": "He-Man",
+  "references": [
+   "thundercats"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "How is Frances Gumm the actress better known?",
+  "prediction": "Judy Garland",
+  "references": [
+   "judy garland",
+   "frances gumm"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the first name of the character played by John Travolta in Saturday Night Fever.",
+  "prediction": "Tony",
+  "references": [
+   "tony manero"
+  ],
+  "em": 1,
+  "f1": 0.6667
+ },
+ {
+  "question": "How long does it take, approximately, for light to travel from the Sun to the Earth?",
+  "prediction": "\\[ \\text{Time} = \\frac{\\text{Distance}}{\\",
+  "references": [
+   "about 8 minutes"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What story introduced the Cybermen?",
+  "prediction": "\"The Tenth Planet\"",
+  "references": [
+   "tenth planet"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which fictional girls' boarding school was created by the cartoonist Ronald Searle",
+  "prediction": "St. Trinian's",
+  "references": [
+   "st trinian",
+   "st trinians"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "How were Dr Stantz, Dr Spengler and Dr Venkman better known in the 1980's?",
+  "prediction": "The Ghostbusters",
+  "references": [
+   "ivo shandor",
+   "walter peck",
+   "ghostbusters"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who did Top of the Pops mistakenly portray in a Dexys Midnight Runners song?",
+  "prediction": "Eileen Welsh",
+  "references": [
+   "jocky wilson"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The Miller Brewing Company got its start in what U.S. city?",
+  "prediction": "Milwaukee",
+  "references": [
+   "milwaukee"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was left in Pandora's Box after all the evil escaped?",
+  "prediction": "Hope",
+  "references": [
+   "hope"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What year did E.T. Hit the cinema screen?",
+  "prediction": "1982",
+  "references": [
+   "1982"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was sacked as the Beatles' drummer and replaced by Ringo Starr?",
+  "prediction": "Pete Best",
+  "references": [
+   "pete best",
+   "pete best band"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was Jacques Cousteau's mobile oceonagraphic laboratory.",
+  "prediction": "Calypso",
+  "references": [
+   "calypso"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which statesman was known as the Iron Chancellor?",
+  "prediction": "Otto von Bismarck",
+  "references": [
+   "von bismarck",
+   "iron chancellor",
+   "otto von bismarck"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What is the minimum age of someone running for the office of President of the United States?",
+  "prediction": "35",
+  "references": [
+   "35 years of age"
+  ],
+  "em": 1,
+  "f1": 0.4
+ },
+ {
+  "question": "Which company were responsible for the production of the Spitfire?",
+  "prediction": "Supermarine",
+  "references": [
+   "supermarine"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who had hits with Go Now and Nights in White Satin?",
+  "prediction": "The Moody Blues",
+  "references": [
+   "moody blues"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In the run up to the 1997 election, Tony Blair outlined his parties' three priorities for office, can you name them?",
+  "prediction": "Modernization, Welfare Reform, Devolution",
+  "references": [
+   "tony blair"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who was the author of Pygmalion'?",
+  "prediction": "George Bernard Shaw",
+  "references": [
+   "george bernard shaw"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which shipping forecast area is directly north of German Bight?",
+  "prediction": "North Sea",
+  "references": [
+   "fisher"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The Dakar Rally (previously known as the Paris Dakar rally) is an annual event, but of which country is Dakar the capital city?",
+  "prediction": "Senegal",
+  "references": [
+   "senegal"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who painted Girl with a Pearl Earring?",
+  "prediction": "Johannes Vermeer",
+  "references": [
+   "vermeer",
+   "johannes vermeer"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who was the leader of the gang whose members included Benny the Ball ,Brain and Choo Choo?",
+  "prediction": "Machine Gun Kelly",
+  "references": [
+   "top cat"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who played Aunty Entity' in the film 'Mad Max Beyond the Thunderdome'?",
+  "prediction": "Rosie Lee Simpson",
+  "references": [
+   "tina turner"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In dentistry, what is the name given to hardened dental plaque?",
+  "prediction": "Calculus",
+  "references": [
+   "tartar"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "England won the 1966 World Cup beating Germany 4-2. Hurst scored 3 of England's goals who scored the other?",
+  "prediction": "Bobby Charlton",
+  "references": [
+   "martin peters"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "The original United Artists film studio was founded in 1919 by D.W. Griffith, Mary Pickford, Douglas Fairbanks and who else?",
+  "prediction": "Charlie Chaplin",
+  "references": [
+   "charlie chaplin"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "In which TV series would you find an Eagle Transporter",
+  "prediction": "Babylon 5",
+  "references": [
+   "space 1999"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Who wrote the novel Rasselas in a single week in 1759 to pay for his mother's funeral?",
+  "prediction": "SamuelJohnson",
+  "references": [
+   "samuel johnson"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "How many Rings of Power were there, in total?",
+  "prediction": "3. One of these rings was the Ring of Barahir, which was not used for its intended purpose and thus did not count as one of the",
+  "references": [
+   "twenty"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Another name for the Holy Wars between the  Christian states of Europe against the Saracens",
+  "prediction": "Crusades",
+  "references": [
+   "crusading",
+   "crusaders",
+   "crusade",
+   "crusades"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Name the fantasy movie directed by Terry Gilliam, where 6 dwarves have stolen a map.",
+  "prediction": "Step 4: Remember \"Time Bandits\" (1980), which is a fantasy film by Terry Gilliam featuring dwarves and",
+  "references": [
+   "time bandits"
+  ],
+  "em": 1,
+  "f1": 0.2222
+ },
+ {
+  "question": "In which is Shakespeare's plays are the title character's last words the rest is silence?",
+  "prediction": "Richard III",
+  "references": [
+   "hamlet"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Mel Gibson (1990) and Kenneth Branagh (1996) have both played which character in movies?",
+  "prediction": "William Wallace",
+  "references": [
+   "hamlet"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "By what name did Samuel Langhorne Clemens publish his novels under?",
+  "prediction": "Mark Twain",
+  "references": [
+   "samuel langhorne clemens",
+   "mark twain"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who is credited with the discovery of the tomb of King Tutankhamen in 1922?",
+  "prediction": "Howard Carter",
+  "references": [
+   "howard carter"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Who created the Miss World pageant?",
+  "prediction": "Eric Morley",
+  "references": [
+   "eric morley"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which TV comedy had characters McLaren, Blanco & Warren",
+  "prediction": "Blackadder",
+  "references": [
+   "porridge"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What was the name of Shari Lewis' sassy sock puppet?",
+  "prediction": "Charlie",
+  "references": [
+   "lamb chop"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "In Egyptian myth who was the God of chaos and disorder?",
+  "prediction": "Set",
+  "references": [
+   "seth"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which jazz saxophonist was nicknamed Bird",
+  "prediction": "CharlieParker",
+  "references": [
+   "charlie parker"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which comedy written by Johnny Speight which first aired in 1965, featured a fervent West Ham supporter?",
+  "prediction": "Step",
+  "references": [
+   "till death us do part"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "Which Roman Emperor was allegedy killed by his wife, Aggripina, in AD54?",
+  "prediction": "Claud",
+  "references": [
+   "claudius",
+   "emperor claudius"
+  ],
+  "em": 0,
+  "f1": 0.0
+ },
+ {
+  "question": "What type of bird was the first released by Noah?",
+  "prediction": "Raven",
+  "references": [
+   "raven"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "What was the name of the World War I fighter ace nicknamed the Red Baron?",
+  "prediction": "Manfred von Richthofen",
+  "references": [
+   "manfred von richthofen",
+   "red baron"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which Holiday movie favourite featured a character called Kevin McCallister?",
+  "prediction": "Home Alone",
+  "references": [
+   "home alone house",
+   "wet bandits",
+   "marv merchants",
+   "gus polinski",
+   "harry and marv",
+   "home alone",
+   "angels with filthy souls"
+  ],
+  "em": 1,
+  "f1": 1.0
+ },
+ {
+  "question": "Which method of painting consists of applying pigment to wet plaster?",
+  "prediction": "fresco",
+  "references": [
+   "fresco"
+  ],
+  "em": 1,
+  "f1": 1.0
+ }
+]
